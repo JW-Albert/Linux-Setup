@@ -7,6 +7,9 @@ apt update -y && apt upgrade -y
 echo "[INFO] 安裝 systemd-timesyncd"
 apt install systemd-timesyncd -y
 
+echo "[INFO] 安裝 hwcloc 套件 util-linux-extra"
+apt install util-linux-extra -y
+
 echo "[INFO] 設定時區為 Asia/Taipei"
 timedatectl set-timezone Asia/Taipei
 

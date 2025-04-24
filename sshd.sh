@@ -22,21 +22,7 @@ echo "[INFO] 設定 PermitRootLogin 為 $allow_root"
 sed -i '/^#\?PermitRootLogin /d' /etc/ssh/sshd_config
 echo "PermitRootLogin $allow_root" >> /etc/ssh/sshd_config
 
-# === 3. 啟用 port 80 與 443？ ===
-read -p "[INPUT] 是否開放 port 80？(y/N): " open_80
-read -p "[INPUT] 是否開放 port 443？(y/N): " open_443
-
-# 開放 port (若有 ufw)
-if command -v ufw &> /dev/null; then
-  echo "[INFO] 設定 ufw 防火牆..."
-  ufw allow $ssh_port/tcp
-  [[ $open_80 == "y" || $open_80 == "Y" ]] && ufw allow 80/tcp
-  [[ $open_443 == "y" || $open_443 == "Y" ]] && ufw allow 443/tcp
-else
-  echo "[WARN] 未安裝 ufw，跳過防火牆設定"
-fi
-
-# === 4. 重新啟動 SSH ===
+# === 3. 重新啟動 SSH ===
 echo "[INFO] 重新啟動 SSH 服務..."
 systemctl restart ssh
 

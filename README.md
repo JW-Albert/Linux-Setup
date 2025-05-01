@@ -1,1 +1,1 @@
-# Ddebian12-Setup
+# Debian12-Setup

@@ -1,5 +1,7 @@
 #! /bin/bash
 
+apt install curl -y
+
 chmod +x send_ip.sh
 
 mkdir /root/Tell_Me_after_Boot

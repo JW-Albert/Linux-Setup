@@ -1,8 +1,5 @@
 #!/bin/bash
 
-# env buile
-apt install -y curl
-
 # Email configuration
 SMTP_SERVER="smtp.gmail.com"
 SMTP_PORT="587"

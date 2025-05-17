@@ -23,7 +23,9 @@ Hostname: $HOSTNAME
 IP Address: $IP_ADDRESS"
 
 # Send email using curl
-echo "$BODY" | curl -s \
+echo "Subject: $SUBJECT
+
+$BODY" | curl -s \
     --url "smtp://$SMTP_SERVER:$SMTP_PORT" \
     --mail-from "$SENDER_EMAIL" \
     --mail-rcpt "$RECIPIENT_EMAIL" \

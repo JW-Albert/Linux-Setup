@@ -1,8 +1,8 @@
 #!/bin/bash
 # 本腳本需以 root 身份執行！
 
-echo "[INFO] 更新 apt"
-apt update -y && apt upgrade -y
+# echo "[INFO] 更新 apt"
+# apt update -y && apt upgrade -y
 
 echo "[INFO] 安裝 systemd-timesyncd"
 apt install systemd-timesyncd -y

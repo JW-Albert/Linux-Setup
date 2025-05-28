@@ -35,7 +35,7 @@ systemctl restart ssh
 
 # === 5. 安裝並設定 ufw 防火牆 ===
 echo "[INFO] 安裝 ufw（Uncomplicated Firewall）..."
-apt update -y
+# apt update -y
 apt install ufw -y
 
 echo "[INFO] 設定預設防火牆規則：拒絕所有輸入、允許所有輸出"

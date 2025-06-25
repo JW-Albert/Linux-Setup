@@ -10,7 +10,7 @@ echo "[INFO] 安裝 hwcloc 套件 util-linux-extra"
 sudo apt install util-linux-extra -y
 
 echo "[INFO] 設定時區為 Asia/Taipei"
-timedatectl set-timezone Asia/Taipei
+sudo timedatectl set-timezone Asia/Taipei
 
 echo "[INFO] 啟用並啟動時間同步服務"
 sudo systemctl enable systemd-timesyncd --now

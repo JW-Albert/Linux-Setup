@@ -1,1 +1,1 @@
-# Ubuntu24.02-Setup
+# Ubuntu24.02

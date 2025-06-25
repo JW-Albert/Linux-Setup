@@ -1,8 +1,8 @@
 #!/bin/bash
 # This script needs to be executed as root!
 
-echo "[INFO] Updating apt"
-apt update -y && apt upgrade -y
+# echo "[INFO] 更新 apt"
+apt update && apt upgrade -y
 
 echo "[INFO] Installing sudo"
 apt install sudo -y

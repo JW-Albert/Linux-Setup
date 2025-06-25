@@ -1,5 +1,4 @@
 #!/bin/bash
-# This script needs to be executed as root!
 
 sudo apt install curl unzip -y
 

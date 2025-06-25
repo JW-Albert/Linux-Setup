@@ -1,5 +1,4 @@
 #!/bin/bash
-# 本腳本需以 root 身份執行！
 
 echo "[INFO] 更新 apt"
 sudo apt update && sudo apt upgrade -y

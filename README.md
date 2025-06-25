@@ -8,9 +8,10 @@
 Linux-Setup/
 ├── albert.sh                    # 用戶帳戶設定腳本
 ├── docker.sh                    # Docker 安裝腳本
-├── nezhahq.sh                   # Nezha 監控代理安裝腳本
+├── nezhahq.sh                   # Nezha 監控代理安裝腳本 for JW-Albert
 ├── sshd.sh                      # SSH 服務配置腳本
-├── timedatectl-Debian12.sh      # 時間同步設定腳本
+├── timedatectl-Debian12.sh      # 時間同步設定腳本 for Debian 12 and Ubuntu 24.02
+├── timedatectl-Ubuntu24.02      # 時間同步設定腳本 for Ubuntu 24.02
 ├── ufw.sh                       # 防火牆配置腳本
 ├── Tell_Me_after_Boot/          # 開機後通知功能
 │   ├── boot.sh                  # 開機通知設定腳本
@@ -54,7 +55,7 @@ Linux-Setup/
 - 安裝並配置 UFW 防火牆
 - 自定義 SSH 連接埠
 - 可選開放 HTTP/HTTPS 連接埠
-- 增強 ICMP 安全設定
+- 增強 ICMP 安全設定，拋棄所有 ICMP 封包(這會導致裝置無法被 PING)
 - 自動備份 SSH 配置
 
 ### 7. 開機通知系統 (`Tell_Me_after_Boot/`)
@@ -84,10 +85,10 @@ chmod +x albert.sh
 sudo ./albert.sh
 ```
 
-### 2. Docker 環境安裝
+### 2. Docker 與 docker-compose 環境安裝
 ```bash
 chmod +x docker.sh
-sudo ./docker.sh
+sudo ./docker.sh 
 ```
 
 ### 3. SSH 安全配置
@@ -157,7 +158,7 @@ sudo ufw status
 ## 📝 版本資訊
 
 - **版本**：1.0.0
-- **最後更新**：2024年
+- **最後更新**：2025年06月25日
 - **支援系統**：Debian 12, Ubuntu 20.04+
 
 ## 🤝 貢獻

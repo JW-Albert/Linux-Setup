@@ -1,10 +1,13 @@
 #!/bin/bash
 
-# echo "[INFO] 更新 apt"
-sudo apt update && sudo apt upgrade -y
+echo "[INFO] 更新 apt"
+sudo apt update -y && sudo apt upgrade -y
 
 echo "[INFO] 安裝 systemd-timesyncd"
 sudo apt install systemd-timesyncd -y
+
+echo "[INFO] 安裝 hwcloc 套件 util-linux-extra"
+sudo apt install util-linux-extra -y
 
 echo "[INFO] 設定時區為 Asia/Taipei"
 sudo timedatectl set-timezone Asia/Taipei
@@ -20,7 +23,7 @@ sudo sed -i '/^NTP=/d' /etc/systemd/timesyncd.conf
 sudo sed -i '/^FallbackNTP=/d' /etc/systemd/timesyncd.conf
 
 echo "[INFO] 確保 [Time] 區塊存在"
-if ! sudo grep -q "^\[Time\]" /etc/systemd/timesyncd.conf; then
+if ! grep -q "^\[Time\]" /etc/systemd/timesyncd.conf; then
     echo "[Time]" | sudo tee -a /etc/systemd/timesyncd.conf
 fi
 

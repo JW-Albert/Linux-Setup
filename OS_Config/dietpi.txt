@@ -5,6 +5,12 @@
 #------------------------------------------------------------------------------------------------------
 ##### DietPi-Automation settings, applied on first boot of DietPi only, ONCE! #####
 #------------------------------------------------------------------------------------------------------
+# Initial user and default software installation password
+# - Sets "root" and "dietpi" user's login passwords and is used by dietpi-software as default for software installs which require a password.
+# - Once applied during first run setup, the password is removed from this file, encrypted and stored to a safer location to be used by dietpi-software only.
+# - WARN: The default SSH server Dropbear does not support passwords over 100 bytes. Certain special characters, and such with accents, take 2 bytes.
+# - WARN: We cannot guarantee that all software options can handle special characters like $"|\.
+AUTO_SETUP_GLOBAL_PASSWORD=dietpi
 
 ##### Language/Regional options #####
 # Locale e.g.: "en_GB.UTF-8" / "de_DE.UTF-8" | One entry and UTF-8 ONLY!
@@ -25,20 +31,20 @@ AUTO_SETUP_NET_WIFI_ENABLED=0
 
 # WiFi country code: 2 capital letter value (e.g. GB US DE JP): https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
 # - NB: This choice may be overridden if the WiFi access point sends a country code.
-AUTO_SETUP_NET_WIFI_COUNTRY_CODE=JP
+AUTO_SETUP_NET_WIFI_COUNTRY_CODE=GB
 
 # Enter your static network details below, if applicable.
-AUTO_SETUP_NET_USESTATIC=0
+AUTO_SETUP_NET_USESTATIC=1
 AUTO_SETUP_NET_STATIC_IP=192.168.50.30
 AUTO_SETUP_NET_STATIC_MASK=255.255.255.0
 AUTO_SETUP_NET_STATIC_GATEWAY=192.168.50.254
 AUTO_SETUP_NET_STATIC_DNS=192.168.50.1
 
 # Set to "1" to convert DHCP leased network settings into static settings automatically on first boot.
-AUTO_SETUP_DHCP_TO_STATIC=0
+AUTO_SETUP_DHCP_TO_STATIC=1
 
 # Hostname
-AUTO_SETUP_NET_HOSTNAME=DietPi
+AUTO_SETUP_NET_HOSTNAME=DietPi-Pi4
 
 # Force Ethernet speeds: 0=automatic speed | 10 = 10 Mbit/s | 100 = 100 Mbit/s etc.
 # - Use this when your Ethernet adapter has an unstable 1 Gbit/s link.
@@ -63,7 +69,7 @@ AUTO_UNMASK_LOGIND=0
 # - Add as many APT package names as you wish, separated by space.
 # - They will be installed after dietpi-software options and before the script defined via AUTO_SETUP_CUSTOM_SCRIPT_EXEC (see below) is executed.
 # - E.g. the following (without the leading "#") will install the APT packages iotop, iptables and xz-utils:
-AUTO_SETUP_APT_INSTALLS=net-tools python3 python3-pip python3-venv git curl traceroute dnsutils sudo
+#AUTO_SETUP_APT_INSTALLS=iotop iptables xz-utils
 
 # Custom Script (pre-networking and pre-DietPi install)
 # - Allows you to automatically execute a custom script before network is up on first boot.
@@ -105,7 +111,7 @@ AUTO_SETUP_WEB_SERVER_INDEX=0
 # - Desktop preference: 0=LXDE | -1=Xfce | -2=MATE | -3=LXQt | -4=GNUstep
 AUTO_SETUP_DESKTOP_INDEX=0
 # - Browser preference: 0=None | -1=Firefox | -2=Chromium
-AUTO_SETUP_BROWSER_INDEX=-1
+AUTO_SETUP_BROWSER_INDEX=0
 
 # DietPi-Autostart: 0=Console | 7=Console autologin | 1=Kodi | 2=Desktop autologin | 16=Desktop | 4=OpenTyrian | 5=DietPi-CloudShell | 6=Amiberry fast boot | 8=Amiberry standard boot | 9=DDX-Rebirth | 10=CAVA Spectrum | 11=Chromium kiosk | 14=Custom script (background) | 17=Custom script (foreground)
 # - This will be effective on 2nd boot, after first run update and installs have been done.
@@ -117,39 +123,30 @@ AUTO_SETUP_AUTOSTART_TARGET_INDEX=0
 AUTO_SETUP_AUTOSTART_LOGIN_USER=root
 
 ##### Non-interactive first run setup #####
-# On first boot, run update, initial setup and software installs without any user interaction.
-# - Setting this to "1" is required for AUTO_SETUP_GLOBAL_PASSWORD and AUTO_SETUP_INSTALL_SOFTWARE_ID.
-# - Setting this to "1" indicates that you accept the DietPi GPLv2 license, available at /boot/dietpi-LICENSE.txt, superseding AUTO_SETUP_ACCEPT_LICENSE.
+# On first boot, run updates, initial setup, and optional software installs without any user interaction.
+# - Please change AUTO_SETUP_GLOBAL_PASSWORD when enabling this option!
 AUTO_SETUP_AUTOMATED=1
-
-# On first boot, apply this password for login users and software installs automatically.
-# - Requires AUTO_SETUP_AUTOMATED=1
-# - Affects "root" and "dietpi" user's login passwords and is used by dietpi-software as default for software installs which require a password.
-# - During first run setup, the password is removed from this file and instead encrypted and saved to root filesystem.
-# - WARN: The default SSH server Dropbear does not support passwords over 100 characters.
-# - WARN: We cannot guarantee that all software options can handle special characters like \"$.
-AUTO_SETUP_GLOBAL_PASSWORD=Albertwang@0801
 
 # Software to automatically install
 # - Requires AUTO_SETUP_AUTOMATED=1
 # - List of available software IDs: https://github.com/MichaIng/DietPi/wiki/DietPi-Software-list
 # - Add as many software IDs as you wish, separated by space.
-# - DietPi will automatically install all dependencies, like ALSA/X11 for desktops etc.
+# - DietPi will automatically install all dependencies, like ALSA/X11 for desktops, a webserver for web applications etc.
 # - E.g. the following (without the leading "#") will install the LXDE desktop, the TigerVNC server and the Kodi media centre automatically on first boot:
-#AUTO_SETUP_INSTALL_SOFTWARE_ID=
+#AUTO_SETUP_INSTALL_SOFTWARE_ID=23 28 31
 
 #------------------------------------------------------------------------------------------------------
 ##### Misc DietPi program settings #####
 #------------------------------------------------------------------------------------------------------
 # DietPi-Survey: 1=opt in | 0=opt out | -1=ask on first call
-# - https://dietpi.com/docs/dietpi_tools/#miscellaneous (see tab 'DietPi Survey')
+# - https://dietpi.com/docs/dietpi_tools/system_configuration/#dietpi-survey
 SURVEY_OPTED_IN=0
 
 #------------------------------------------------------------------------------------------------------
 ##### DietPi-Config settings #####
 #------------------------------------------------------------------------------------------------------
 # CPU Governor: schedutil | ondemand | interactive | conservative | powersave | performance
-CONFIG_CPU_GOVERNOR=performance
+CONFIG_CPU_GOVERNOR=schedutil
 # Ondemand Sampling Rate | Min value: 10000 microseconds (10 ms)
 CONFIG_CPU_ONDEMAND_SAMPLE_RATE=25000
 # Ondemand Sampling Down Factor: Sampling Rate * Down Factor / 1000 = ms (40 = 1000 ms when sampling rate is 25000)
@@ -167,7 +164,7 @@ CONFIG_CPU_MIN_FREQ=Disabled
 # Disable Intel-based turbo/boost stepping. This flag should not be required, setting <100% MAX frequency should disable Turbo on Intel CPUs.
 CONFIG_CPU_DISABLE_TURBO=0
 
-#GPU Driver | Will also be applied during 1st run if set to a value other than 'None'
+# GPU Driver | Will also be applied during 1st run if set to a value other than 'none'
 #   NB: x86_64 PC only!
 #   Adds support for GUI/video hardware acceleration, OpenGL/GLES, Vulkan and VA-API
 # - none | Default, No GPU
@@ -179,25 +176,25 @@ CONFIG_GPU_DRIVER=none
 
 # System-wide proxy settings
 # - Do not modify, you must use dietpi-config > "Network Options: Adapters" to apply
-CONFIG_PROXY_ADDRESS=
-CONFIG_PROXY_PORT=
+CONFIG_PROXY_ADDRESS=MyProxyServer.com
+CONFIG_PROXY_PORT=8080
 CONFIG_PROXY_USERNAME=
 CONFIG_PROXY_PASSWORD=
 
 # Connection timeout in seconds for G_CHECK_NET and G_CHECK_URL. Increase if you have a "flaky" connection or slow DNS resolver.
 # - Set this to "0" to allow unlimited time, however this is not recommended to avoid unlimited hanging background scripts, e.g. daily DietPi update check.
 # - A negative or non-integer value will result in the default of 10 seconds.
-CONFIG_G_CHECK_URL_TIMEOUT=20
+CONFIG_G_CHECK_URL_TIMEOUT=10
 # Connection attempts with above timeout each, before G_CHECK_NET and G_CHECK_URL give up and prompt an error.
 # - Any value below "1" or a non-integer value will result in the default of 2 attempts.
-CONFIG_G_CHECK_URL_ATTEMPTS=3
+CONFIG_G_CHECK_URL_ATTEMPTS=2
 # General connection and DNS testing
 # - IPv4 address to ping when checking network connectivity. Default: 9.9.9.9 (Quad9 DNS IP)
-CONFIG_CHECK_CONNECTION_IP=8.8.8.8
+CONFIG_CHECK_CONNECTION_IP=1.1.1.1
 # - IPv6 address to ping when checking network connectivity. Default: 2620:fe::fe (Quad9 DNS IP)
 CONFIG_CHECK_CONNECTION_IPV6=2620:fe::fe
-# - Domain to resolve when checking DNS resolver. Default: dns9.quad9.net (Quad9 DNS domain)
-CONFIG_CHECK_DNS_DOMAIN=google.com
+# - Domain to resolve when checking DNS resolver. Default: dietpi.com
+CONFIG_CHECK_DNS_DOMAIN=dietpi.com
 
 # Daily check for DietPi updates: 0=disable | 1=enable
 # - Checks are done by downloading a file of only 7 bytes.
@@ -208,7 +205,7 @@ CONFIG_CHECK_DIETPI_UPDATES=1
 CONFIG_CHECK_APT_UPDATES=1
 
 # Network time sync: 0=disabled | 1=boot only | 2=boot + daily | 3=boot + hourly | 4=Daemon + Drift
-CONFIG_NTP_MODE=3
+CONFIG_NTP_MODE=2
 
 # Serial Console: Set to 0 if you do not require serial console.
 CONFIG_SERIAL_CONSOLE_ENABLE=1
@@ -225,9 +222,9 @@ CONFIG_ENABLE_IPV6=0
 
 # APT mirrors which are applied to /etc/apt/sources.list | Values here will also be applied during 1st run setup
 # - Raspbian: https://www.raspbian.org/RaspbianMirrors
-CONFIG_APT_RASPBIAN_MIRROR=https://free.nchc.org.tw/raspbian/raspbian/
+CONFIG_APT_RASPBIAN_MIRROR=http://free.nchc.org.tw/raspbian/raspbian
 # - Debian: https://www.debian.org/mirror/official#list
-CONFIG_APT_DEBIAN_MIRROR=https://opensource.nchc.org.tw/debian/
+CONFIG_APT_DEBIAN_MIRROR=https://free.nchc.org.tw/debian/
 
 # NTP server(s) applied to /etc/systemd/timesyncd.conf
 # - "default": Use the NTP server(s) provided via DHCP, else the debian.pool.ntp.org NTP pool.
@@ -235,7 +232,7 @@ CONFIG_APT_DEBIAN_MIRROR=https://opensource.nchc.org.tw/debian/
 # - To use another public NTP pool, see the full list at: https://www.ntppool.org/zone/@
 #   Use the pool domain without leading integer and dot (without "0."), like "debian.pool.ntp.org", "pool.ntp.org" or "uk.pool.ntp.org".
 # - You can also use a custom IP address, hostname or any combination of space-separated IP addresses, hostnames and NTP pool domains.
-CONFIG_NTP_MIRROR=time.stdtime.gov.tw tock.stdtime.gov.tw watch.stdtime.gov.tw clock.stdtime.gov.tw tick.stdtime.gov.tw
+CONFIG_NTP_MIRROR=tick.stdtime.gov.tw tock.stdtime.gov.tw time.stdtime.gov.tw watch.stdtime.gov.tw clock.stdtime.gov.tw
 
 #------------------------------------------------------------------------------------------------------
 ##### DietPi-Software settings #####
@@ -262,7 +259,7 @@ SOFTWARE_OWNCLOUD_DATADIR=/mnt/dietpi_userdata/owncloud_data
 SOFTWARE_NEXTCLOUD_DATADIR=/mnt/dietpi_userdata/nextcloud_data
 
 # WiFi Hotspot
-SOFTWARE_WIFI_HOTSPOT_SSID=DietPiHotSpot
+SOFTWARE_WIFI_HOTSPOT_SSID=DietPi-HotSpot
 # - Key requires a minimum of 8 characters
 SOFTWARE_WIFI_HOTSPOT_KEY=dietpihotspot
 # - 2.4 GHz WiFi channel, not effective if 5 GHz frequency is enabled
@@ -270,7 +267,7 @@ SOFTWARE_WIFI_HOTSPOT_CHANNEL=3
 # - 802.11n/WiFi 4, 802.11ac/WiFi 5, 802.11ax/WiFi 6 and 5 GHz support: Note that your WiFi adapter must support it!
 # - WiFi 5 support implicitly switches to 5 GHz frequency.
 # - 5 GHz frequency implicitly enables WiFi 4 support if neither WiFi 4, 5 nor 6 is enabled.
-SOFTWARE_WIFI_HOTSPOT_WIFI4=1
+SOFTWARE_WIFI_HOTSPOT_WIFI4=0
 SOFTWARE_WIFI_HOTSPOT_WIFI5=0
 # - WiFi 6 is only supported from Debian Bookworm on!
 SOFTWARE_WIFI_HOTSPOT_WIFI6=0
@@ -278,7 +275,7 @@ SOFTWARE_WIFI_HOTSPOT_5G=0
 # - A full list of supported 5 GHz WiFi channels per region can be found e.g. on Wikipedia: https://en.wikipedia.org/wiki/List_of_WLAN_channels#5_GHz_(802.11a/h/n/ac/ax)
 SOFTWARE_WIFI_HOTSPOT_5G_CHANNEL=36
 
-# X.org
+# X11
 # - DPI 96(default) 120(+25%) 144(+50%) 168(+75%) 192(+100%)
 SOFTWARE_XORG_DPI=96
 

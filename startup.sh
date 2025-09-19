@@ -10,3 +10,5 @@ cd Tell_Me_after_Boot
 
 cd ~
 rm -Rf Linux-Setup
+
+reboot

@@ -35,7 +35,7 @@ sudo systemctl restart systemd-timesyncd
 sudo timedatectl set-ntp true
 
 echo "[INFO] 將系統時間寫入硬體時鐘"
-sudo hwclock --systohc
+sudo hwclock -w
 
 echo "[INFO] 顯示目前時間狀態"
 sudo timedatectl

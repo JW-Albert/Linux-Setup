@@ -1,0 +1,11 @@
+[Unit]
+Description=Setup login notification script
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=$HOME/Tell_Me/login/setup.sh
+RemainAfterExit=true
+
+[Install]
+WantedBy=multi-user.target

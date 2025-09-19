@@ -30,6 +30,9 @@ fi
 echo "[INFO] 設定 NTP 為台灣標準時間伺服器"
 sudo sed -i '/^\[Time\]/a NTP=tick.stdtime.gov.tw tock.stdtime.gov.tw time.stdtime.gov.tw watch.stdtime.gov.tw clock.stdtime.gov.tw' /etc/systemd/timesyncd.conf
 
+echo "[INFO] 設定硬體時鐘為本地時鐘"
+sudo timedatectl set-local-rtc 1
+
 echo "[INFO] 重新啟動 timesyncd 並啟用 NTP 同步"
 sudo systemctl restart systemd-timesyncd
 sudo timedatectl set-ntp true

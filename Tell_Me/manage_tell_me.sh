@@ -30,7 +30,7 @@ show_menu() {
     echo "4. 重啟所有服務"
     echo "5. 查看日誌"
     echo "6. 清理舊日誌"
-    echo "7. 測試郵件發送"
+    echo "7. 測試 Discord 通知"
     echo "8. 顯示配置資訊"
     echo "9. 重新安裝服務"
     echo "10. 退出"
@@ -42,7 +42,7 @@ check_services() {
     echo -e "${BLUE}檢查服務狀態...${NC}"
     echo ""
     
-    services=("login-notify.service" "notify.service")
+    services=("login-notify.service" "boot-notify.service")
     for service in "${services[@]}"; do
         if systemctl is-active --quiet "$service"; then
             echo -e "✓ ${GREEN}$service${NC} - 運行中"
@@ -57,7 +57,7 @@ check_services() {
 start_services() {
     echo -e "${BLUE}啟動所有服務...${NC}"
 sudo systemctl start login-notify.service
-sudo systemctl start notify.service
+sudo systemctl start boot-notify.service
     echo -e "${GREEN}所有服務已啟動${NC}"
     echo ""
 }
@@ -66,7 +66,7 @@ sudo systemctl start notify.service
 stop_services() {
     echo -e "${BLUE}停止所有服務...${NC}"
 sudo systemctl stop login-notify.service
-sudo systemctl stop notify.service
+sudo systemctl stop boot-notify.service
     echo -e "${YELLOW}所有服務已停止${NC}"
     echo ""
 }
@@ -75,7 +75,7 @@ sudo systemctl stop notify.service
 restart_services() {
     echo -e "${BLUE}重啟所有服務...${NC}"
 sudo systemctl restart login-notify.service
-sudo systemctl restart notify.service
+sudo systemctl restart boot-notify.service
     echo -e "${GREEN}所有服務已重啟${NC}"
     echo ""
 }
@@ -85,16 +85,15 @@ view_logs() {
     echo -e "${BLUE}可用的日誌檔案：${NC}"
     echo "1. 登入通知日誌"
     echo "2. 開機後通知日誌"
-    echo "3. 登入通知安裝日誌"
-    echo "4. 開機後通知安裝日誌"
-    echo "5. 所有日誌"
+    echo "3. 登入通知設定日誌"
+    echo "4. 所有日誌"
     echo ""
-    read -p "請選擇 (1-5): " choice
+    read -p "請選擇 (1-4): " choice
     
     case $choice in
         1)
-            if [ -f "$TELL_ME_LOGS/notify.log" ]; then
-                tail -f "$TELL_ME_LOGS/notify.log"
+            if [ -f "$TELL_ME_LOGS/login_notify.log" ]; then
+                tail -f "$TELL_ME_LOGS/login_notify.log"
             else
                 echo -e "${RED}日誌檔案不存在${NC}"
             fi
@@ -107,20 +106,13 @@ view_logs() {
             fi
             ;;
         3)
-            if [ -f "$TELL_ME_LOGS/install.log" ]; then
-                tail -f "$TELL_ME_LOGS/install.log"
+            if [ -f "$TELL_ME_LOGS/setup_login_notify.log" ]; then
+                tail -f "$TELL_ME_LOGS/setup_login_notify.log"
             else
                 echo -e "${RED}日誌檔案不存在${NC}"
             fi
             ;;
         4)
-            if [ -f "$TELL_ME_LOGS/install.log" ]; then
-                tail -f "$TELL_ME_LOGS/install.log"
-            else
-                echo -e "${RED}日誌檔案不存在${NC}"
-            fi
-            ;;
-        5)
             echo -e "${BLUE}所有日誌檔案：${NC}"
             ls -la "$TELL_ME_LOGS/"
             ;;
@@ -139,38 +131,29 @@ cleanup_logs() {
     echo ""
 }
 
-# 測試郵件發送
-test_email() {
-    echo -e "${BLUE}測試郵件發送...${NC}"
+# 測試 Discord 通知
+test_discord() {
+    echo -e "${BLUE}測試 Discord 通知...${NC}"
     
-    HOSTNAME=$(hostname)
-    DATE=$(date '+%Y-%m-%d %H:%M:%S')
-    SUBJECT="Tell_Me 測試郵件: $HOSTNAME"
-    BODY="這是一封測試郵件
-
-發送時間: $DATE
-主機名: $HOSTNAME
-IP 地址: $(hostname -I | awk '{print $1}')
-
-如果您收到此郵件，表示 Tell_Me 郵件服務運作正常。
-"
-
-    echo "Subject: $SUBJECT
-
-$BODY" | curl -s \
-        --url "smtp://$SMTP_SERVER:$SMTP_PORT" \
-        --mail-from "$SENDER_EMAIL" \
-        --mail-rcpt "$RECIPIENT_EMAIL" \
-        --ssl-reqd \
-        --user "$SENDER_EMAIL:$SENDER_PASSWORD" \
-        --upload-file - \
-        --mail-rcpt-allowfails \
-        --fail-with-body
-
+    if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+        echo -e "${RED}錯誤: Discord Webhook URL 未設定${NC}"
+        echo "請檢查 config.sh 中的 Discord 設定"
+        return 1
+    fi
+    
+    echo "發送測試通知到 Discord..."
+    
+    TEST_MESSAGE="🧪 **Tell_Me 測試通知**\n\n**測試時間**: $(date '+%Y-%m-%d %H:%M:%S')\n**主機名**: $(hostname)\n**IP 地址**: $(hostname -I | awk '{print $1}')\n\n如果您看到這則訊息，表示 Tell_Me Discord 通知功能運作正常！ 🎉"
+    
+    curl -H "Content-Type: application/json" \
+         -X POST \
+         -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$TEST_MESSAGE\"}" \
+         "$DISCORD_WEBHOOK_URL"
+    
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}測試郵件發送成功！${NC}"
+        echo -e "${GREEN}測試 Discord 通知發送成功！${NC}"
     else
-        echo -e "${RED}測試郵件發送失敗${NC}"
+        echo -e "${RED}測試 Discord 通知發送失敗${NC}"
     fi
     echo ""
 }
@@ -227,9 +210,8 @@ show_config() {
     echo "日誌目錄: $TELL_ME_LOGS"
     echo "登入通知: $TELL_ME_LOGIN"
     echo "開機通知: $TELL_ME_BOOT"
-    echo "SMTP 伺服器: $SMTP_SERVER:$SMTP_PORT"
-    echo "發送者: $SENDER_EMAIL"
-    echo "接收者: $RECIPIENT_EMAIL"
+    echo "Discord 機器人: $DISCORD_USERNAME"
+    echo "Discord Webhook: ${DISCORD_WEBHOOK_URL:0:50}..."
     echo "日誌保留天數: $LOG_RETENTION_DAYS"
     echo ""
 }
@@ -249,7 +231,7 @@ main() {
             4) restart_services ;;
             5) view_logs ;;
             6) cleanup_logs ;;
-            7) test_email ;;
+            7) test_discord ;;
             8) show_config ;;
             9) reinstall_services ;;
             10) 

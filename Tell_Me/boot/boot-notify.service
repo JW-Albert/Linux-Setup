@@ -4,7 +4,7 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=/bin/bash $HOME/Tell_Me/boot/notify.sh
+ExecStart=/root/Tell_Me/boot/notify.sh
 User=root
 
 [Install]

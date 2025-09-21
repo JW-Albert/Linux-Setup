@@ -12,13 +12,13 @@
 Tell_Me/login/
 ├── notify.sh               # 主要登入通知腳本
 ├── setup.sh                # PAM 設定腳本
-├── notify.service           # systemd 服務檔案
+├── login-notify.service    # systemd 服務檔案
 └── install.sh              # 獨立安裝腳本
 ```
 
 **功能：**
 - 監控 SSH 登入事件
-- 發送登入通知郵件
+- 發送登入通知到 Discord
 - 自動設定 PAM 配置
 - 提供詳細的登入資訊（使用者、IP、時間等）
 
@@ -29,7 +29,7 @@ Tell_Me/login/
 ```
 Tell_Me/boot/
 ├── notify.sh               # 主要開機後通知腳本
-├── notify.service           # systemd 服務檔案
+├── boot-notify.service     # systemd 服務檔案
 └── install.sh              # 獨立安裝腳本
 ```
 

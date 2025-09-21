@@ -40,7 +40,7 @@ cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_HOME/config/"
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."
 # 複製服務檔案並替換路徑
-sed "s|ExecStart=.*|ExecStart=/bin/bash $TELL_ME_BOOT/notify.sh|" "$SCRIPT_DIR/boot-notify.service" | sudo tee /etc/systemd/system/boot-notify.service > /dev/null
+sed "s|ExecStart=.*|ExecStart=$TELL_ME_BOOT/notify.sh|" "$SCRIPT_DIR/boot-notify.service" | sudo tee /etc/systemd/system/boot-notify.service > /dev/null
 
 # 啟用並啟動服務
 log "啟用並啟動服務..."

@@ -11,11 +11,11 @@ Linux-Setup/
 │   ├── login/                      # 登入通知服務
 │   │   ├── notify.sh               # 登入通知腳本
 │   │   ├── setup.sh                # 登入通知設定腳本
-│   │   ├── notify.service          # systemd 服務檔案
+│   │   ├── login-notify.service    # systemd 服務檔案
 │   │   └── install.sh              # 登入通知安裝腳本
 │   ├── boot/                       # 開機後通知服務
 │   │   ├── notify.sh               # 開機後通知腳本
-│   │   ├── notify.service          # systemd 服務檔案
+│   │   ├── boot-notify.service     # systemd 服務檔案
 │   │   └── install.sh              # 開機後通知安裝腳本
 │   └── config/                     # 統一配置目錄
 │       └── config.sh               # 統一配置檔案
@@ -33,8 +33,9 @@ Linux-Setup/
 ├── boot/                  # 開機後通知相關檔案
 │   └── notify.sh          # 開機後通知腳本
 ├── logs/                  # 日誌檔案目錄
-│   ├── notify.log         # 通知日誌
-│   └── install.log        # 安裝日誌
+│   ├── login_notify.log   # 登入通知日誌
+│   ├── notify.log         # 開機通知日誌
+│   └── setup_login_notify.log # 登入設定日誌
 ├── manage_tell_me.sh      # 服務管理工具
 └── cleanup_logs.sh        # 日誌清理腳本
 ```
@@ -77,19 +78,19 @@ cd ../boot
 - 啟動/停止/重啟服務
 - 查看日誌
 - 清理舊日誌
-- 測試郵件發送
+- 測試 Discord 通知
 - 顯示配置資訊
 - 重新安裝服務
 
-## 📧 郵件配置
+## 📱 Discord 配置
 
-所有服務使用相同的郵件配置：
+所有服務使用相同的 Discord 配置：
 
-- **SMTP 伺服器**: smtp.gmail.com:587
-- **發送者**: jw.albert.tw@gmail.com
-- **接收者**: albert@mail.jw-albert.tw
+- **Discord Webhook**: https://discord.com/api/webhooks/...
+- **機器人名稱**: Tell_Me Bot
+- **通知頻道**: #notify
 
-如需修改郵件配置，請編輯 `~/Tell_Me/config/config.sh` 檔案。
+如需修改 Discord 配置，請編輯 `~/Tell_Me/config/config.sh` 檔案。
 
 ## 🗑️ 安裝後清理
 
@@ -110,11 +111,11 @@ rm -rf Linux-Setup/
 
 ### 1. 登入通知服務 (login-notify.service)
 
-- **功能**: 當有使用者透過 SSH 登入時自動發送通知郵件
+- **功能**: 當有使用者透過 SSH 登入時自動發送 Discord 通知
 - **觸發**: 每次 SSH 登入
-- **日誌**: `~/Tell_Me/logs/notify.log`
+- **日誌**: `~/Tell_Me/logs/login_notify.log`
 
-### 2. 開機後通知服務 (notify.service)
+### 2. 開機後通知服務 (boot-notify.service)
 
 - **功能**: 系統開機後自動發送系統資訊和 IP 地址
 - **觸發**: 系統開機時
@@ -126,7 +127,7 @@ rm -rf Linux-Setup/
 
 ```bash
 systemctl status login-notify.service
-systemctl status notify.service
+systemctl status boot-notify.service
 ```
 
 ### 手動執行腳本
@@ -146,8 +147,9 @@ systemctl status notify.service
 ls -la ~/Tell_Me/logs/
 
 # 即時查看日誌
+tail -f ~/Tell_Me/logs/login_notify.log
 tail -f ~/Tell_Me/logs/notify.log
-tail -f ~/Tell_Me/logs/install.log
+tail -f ~/Tell_Me/logs/setup_login_notify.log
 ```
 
 ## 🧹 日誌管理
@@ -160,8 +162,8 @@ tail -f ~/Tell_Me/logs/install.log
 
 1. **權限要求**: 安裝腳本需要 sudo 權限
 2. **網路連線**: 服務需要網路連線來發送郵件
-3. **Gmail 設定**: 使用 Gmail 需要啟用應用程式密碼
-4. **防火牆**: 確保 SMTP 端口 587 可正常連線
+3. **Discord 設定**: 需要有效的 Discord Webhook URL
+4. **網路連線**: 確保可以連接到 discord.com
 
 ## 🐛 故障排除
 
@@ -170,18 +172,18 @@ tail -f ~/Tell_Me/logs/install.log
 ```bash
 # 檢查服務狀態
 systemctl status login-notify.service
-systemctl status notify.service
+systemctl status boot-notify.service
 
 # 查看詳細錯誤
 journalctl -u login-notify.service
-journalctl -u notify.service
+journalctl -u boot-notify.service
 ```
 
-### 郵件發送失敗
+### Discord 通知發送失敗
 
 1. 檢查網路連線
-2. 確認 Gmail 應用程式密碼正確
-3. 檢查 SMTP 設定
+2. 確認 Discord Webhook URL 正確
+3. 檢查網路連線到 discord.com
 4. 查看日誌檔案中的錯誤訊息
 
 ### 權限問題
@@ -198,7 +200,7 @@ chmod +x ~/Tell_Me/login/notify.sh
 1. 日誌檔案 (`~/Tell_Me/logs/`)
 2. 系統服務狀態
 3. 網路連線
-4. 郵件配置
+4. Discord 配置
 
 ---
 

@@ -43,42 +43,21 @@ fi
 
 log "登入資訊 - 使用者: $USER_NAME, 主機: $HOSTNAME, IP: $IP_ADDR"
 
-# 建立郵件內容
-SUBJECT="Login Alert: $USER_NAME on $HOSTNAME"
-BODY="A user has logged in:
-
-Date: $DATE
-User: $USER_NAME
-Host: $HOSTNAME
-Source IP: $IP_ADDR
-Terminal: $TERM
-Session: $SSH_TTY
-"
+# 建立 Discord 通知內容
 
 log "準備發送登入通知到 Discord"
 
 # 建立 Discord 訊息
-DISCORD_MESSAGE="🔐 **登入通知**
-
-**使用者**: $USER_NAME
-**主機**: $HOSTNAME
-**時間**: $DATE
-**來源 IP**: $IP_ADDR
-**終端**: $TERM
-**會話**: $SSH_TTY"
+DISCORD_MESSAGE="🔐 **登入通知**\n\n**使用者**: $USER_NAME\n**主機**: $HOSTNAME\n**時間**: $DATE\n**來源 IP**: $IP_ADDR\n**終端**: $TERM\n**會話**: $SSH_TTY"
 
 # 發送 Discord 通知
 log "開始發送 Discord 通知..."
 log "Webhook URL: $DISCORD_WEBHOOK_URL"
 
-# 使用 printf 來正確處理換行符號
-printf '{"username":"%s","avatar_url":"%s","content":"%s"}' \
-    "$DISCORD_USERNAME" \
-    "$DISCORD_AVATAR_URL" \
-    "$DISCORD_MESSAGE" | curl -H "Content-Type: application/json" \
-    -X POST \
-    --data-binary @- \
-    "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
+curl -H "Content-Type: application/json" \
+     -X POST \
+     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$DISCORD_MESSAGE\"}" \
+     "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
 
 # 檢查 Discord 通知發送結果
 if [ $? -eq 0 ]; then

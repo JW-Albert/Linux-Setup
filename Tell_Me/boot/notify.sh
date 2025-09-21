@@ -27,13 +27,6 @@ fi
 source "$SCRIPT_DIR/../config/config.sh"
 log "配置檔案載入成功"
 
-# Email configuration (使用統一配置)
-SMTP_SERVER="$SMTP_SERVER"
-SMTP_PORT="$SMTP_PORT"
-SENDER_EMAIL="$SENDER_EMAIL"
-SENDER_PASSWORD="$SENDER_PASSWORD"
-RECIPIENT_EMAIL="$RECIPIENT_EMAIL"
-
 # Get system information
 HOSTNAME=$(hostname)
 IP_ADDRESS=$(hostname -I | awk '{print $1}')
@@ -41,44 +34,19 @@ DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
 log "系統資訊 - 主機名: $HOSTNAME, IP: $IP_ADDRESS"
 
-# Create email content
-SUBJECT="System Information: $HOSTNAME"
-BODY="System Information Report
-
-Date: $DATE
-Hostname: $HOSTNAME
-IP Address: $IP_ADDRESS
-Uptime: $(uptime -p)
-Load Average: $(uptime | awk -F'load average:' '{print $2}')
-Disk Usage: $(df -h / | awk 'NR==2 {print $5}')
-Memory Usage: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')
-"
-
 log "準備發送開機後通知到 Discord"
 
 # 建立 Discord 訊息
-DISCORD_MESSAGE="🚀 **系統開機通知**
-
-**主機名**: $HOSTNAME
-**IP 地址**: $IP_ADDRESS
-**開機時間**: $DATE
-**運行時間**: $(uptime -p)
-**負載平均**: $(uptime | awk -F'load average:' '{print $2}')
-**磁碟使用率**: $(df -h / | awk 'NR==2 {print $5}')
-**記憶體使用率**: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')"
+DISCORD_MESSAGE="🚀 **系統開機通知**\n\n**主機名**: $HOSTNAME\n**IP 地址**: $IP_ADDRESS\n**開機時間**: $DATE\n**運行時間**: $(uptime -p)\n**負載平均**: $(uptime | awk -F'load average:' '{print $2}')\n**磁碟使用率**: $(df -h / | awk 'NR==2 {print $5}')\n**記憶體使用率**: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')"
 
 # 發送 Discord 通知
 log "開始發送 Discord 通知..."
 log "Webhook URL: $DISCORD_WEBHOOK_URL"
 
-# 使用 printf 來正確處理換行符號
-printf '{"username":"%s","avatar_url":"%s","content":"%s"}' \
-    "$DISCORD_USERNAME" \
-    "$DISCORD_AVATAR_URL" \
-    "$DISCORD_MESSAGE" | curl -H "Content-Type: application/json" \
-    -X POST \
-    --data-binary @- \
-    "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
+curl -H "Content-Type: application/json" \
+     -X POST \
+     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$DISCORD_MESSAGE\"}" \
+     "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
 
 # Check if Discord notification was sent successfully
 if [ $? -eq 0 ]; then

@@ -13,10 +13,14 @@ Linux-Setup/
 ├── timedatectl-Debian12.sh      # 時間同步設定腳本 for Debian 12 and Ubuntu 24.02
 ├── timedatectl-Ubuntu24.02      # 時間同步設定腳本 for Ubuntu 24.02
 ├── ufw.sh                       # 防火牆配置腳本
-├── Tell_Me_after_Boot/          # 開機後通知功能
-│   ├── boot.sh                  # 開機通知設定腳本
-│   ├── send_ip.sh               # IP 資訊發送腳本
-│   └── send-ip.service          # systemd 服務檔案
+├── Tell_Me/                     # Tell_Me 通知服務套件
+│   ├── login/                   # 登入通知服務
+│   ├── boot/                    # 開機後通知服務
+│   └── config/                  # 統一配置
+├── install_tell_me.sh           # Tell_Me 統一安裝腳本
+├── manage_tell_me.sh            # Tell_Me 管理工具
+├── test_discord.sh              # Discord 測試腳本
+└── DISCORD_SETUP.md             # Discord 設定指南
 └── README.md                    # 專案說明文件
 ```
 
@@ -58,10 +62,11 @@ Linux-Setup/
 - 增強 ICMP 安全設定，拋棄所有 ICMP 封包(這會導致裝置無法被 PING)
 - 自動備份 SSH 配置
 
-### 7. 開機通知系統 (`Tell_Me_after_Boot/`)
-- 系統開機後自動發送 IP 資訊
-- 透過 Gmail SMTP 發送郵件
-- 包含主機名稱和 IP 地址
+### 7. Tell_Me 通知系統 (`Tell_Me/`)
+- 登入通知：SSH 登入時自動發送通知
+- 開機通知：系統開機後自動發送系統資訊
+- 透過 Discord Webhook 發送通知
+- 包含詳細的系統和使用者資訊
 - 設定為 systemd 服務
 
 ## 📋 使用前準備
@@ -109,11 +114,15 @@ chmod +x ufw.sh
 sudo ./ufw.sh
 ```
 
-### 6. 開機通知設定
+### 6. Tell_Me 通知系統設定
 ```bash
-cd Tell_Me_after_Boot
-chmod +x boot.sh
-sudo ./boot.sh
+# 統一安裝 Tell_Me 服務
+chmod +x install_tell_me.sh
+sudo ./install_tell_me.sh
+
+# 測試 Discord 通知
+chmod +x test_discord.sh
+./test_discord.sh
 ```
 
 ## ⚠️ 重要注意事項
@@ -128,10 +137,10 @@ sudo ./boot.sh
 2. 執行 `sshd.sh` 或 `ufw.sh` 配置 SSH 和防火牆
 3. 根據需求執行其他腳本
 
-### 開機通知設定
-- 需要配置 Gmail 應用程式密碼
-- 確保 SMTP 設定正確
-- 服務會在每次開機時自動執行
+### Tell_Me 通知設定
+- 需要配置 Discord Webhook URL
+- 確保網路連線到 discord.com
+- 服務會在登入和開機時自動執行
 
 ## 🔍 故障排除
 
@@ -148,8 +157,9 @@ sudo systemctl status ssh
 # 檢查 Docker 服務
 sudo systemctl status docker
 
-# 檢查開機通知服務
-sudo systemctl status send-ip.service
+# 檢查 Tell_Me 服務
+sudo systemctl status login-notify.service
+sudo systemctl status boot-notify.service
 
 # 檢查防火牆狀態
 sudo ufw status

@@ -41,23 +41,14 @@ echo ""
 echo "=== 測試 Discord 通知 ==="
 
 # 建立測試訊息
-TEST_MESSAGE="🧪 **Tell_Me 測試通知**
-
-**測試時間**: $(date '+%Y-%m-%d %H:%M:%S')
-**主機名**: $(hostname)
-**IP 地址**: $(hostname -I | awk '{print $1}')
-
-如果您看到這則訊息，表示 Tell_Me Discord 通知功能運作正常！ 🎉"
+TEST_MESSAGE="🧪 **Tell_Me 測試通知**\n\n**測試時間**: $(date '+%Y-%m-%d %H:%M:%S')\n**主機名**: $(hostname)\n**IP 地址**: $(hostname -I | awk '{print $1}')\n\n如果您看到這則訊息，表示 Tell_Me Discord 通知功能運作正常！ 🎉"
 
 # 發送測試訊息
 echo "發送測試訊息到 Discord..."
-printf '{"username":"%s","avatar_url":"%s","content":"%s"}' \
-    "$DISCORD_USERNAME" \
-    "$DISCORD_AVATAR_URL" \
-    "$TEST_MESSAGE" | curl -H "Content-Type: application/json" \
-    -X POST \
-    --data-binary @- \
-    "$DISCORD_WEBHOOK_URL"
+curl -H "Content-Type: application/json" \
+     -X POST \
+     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$TEST_MESSAGE\"}" \
+     "$DISCORD_WEBHOOK_URL"
 
 if [ $? -eq 0 ]; then
     echo ""

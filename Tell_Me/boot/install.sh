@@ -27,6 +27,7 @@ sudo apt install -y curl
 log "建立目錄結構..."
 mkdir -p "$TELL_ME_BOOT"
 mkdir -p "$TELL_ME_LOGS"
+mkdir -p "$TELL_ME_HOME/config"
 
 # 設定腳本權限並移動
 log "設定腳本權限..."
@@ -34,10 +35,12 @@ chmod +x notify.sh
 
 log "移動檔案到目標目錄..."
 mv notify.sh "$TELL_ME_BOOT/"
+cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_HOME/config/"
 
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."
-sudo mv boot-notify.service /etc/systemd/system/
+# 複製服務檔案並替換路徑
+sed "s|ExecStart=.*|ExecStart=/bin/bash $TELL_ME_BOOT/notify.sh|" "$SCRIPT_DIR/boot-notify.service" | sudo tee /etc/systemd/system/boot-notify.service > /dev/null
 
 # 啟用並啟動服務
 log "啟用並啟動服務..."

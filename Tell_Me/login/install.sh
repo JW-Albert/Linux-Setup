@@ -27,11 +27,13 @@ sudo apt install -y curl
 log "建立目錄結構..."
 mkdir -p "$TELL_ME_LOGIN"
 mkdir -p "$TELL_ME_LOGS"
+mkdir -p "$TELL_ME_HOME/config"
 
 # 複製腳本到目標目錄
 log "複製腳本到目標目錄..."
 cp "$SCRIPT_DIR/notify.sh" "$TELL_ME_LOGIN/"
 cp "$SCRIPT_DIR/setup.sh" "$TELL_ME_LOGIN/"
+cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_HOME/config/"
 
 # 設定腳本權限
 log "設定腳本權限..."
@@ -40,7 +42,8 @@ chmod +x "$TELL_ME_LOGIN/setup.sh"
 
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."
-sudo cp "$SCRIPT_DIR/login-notify.service" /etc/systemd/system/
+# 複製服務檔案並替換路徑
+sed "s|ExecStart=.*|ExecStart=$TELL_ME_LOGIN/setup.sh|" "$SCRIPT_DIR/login-notify.service" | sudo tee /etc/systemd/system/login-notify.service > /dev/null
 
 # 啟用並啟動服務
 log "啟用並啟動服務..."

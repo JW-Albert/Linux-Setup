@@ -59,4 +59,4 @@ if [ $? -eq 0 ]; then
 else
     log "開機後通知 Discord 發送失敗"
     exit 1
-fi 
+fi

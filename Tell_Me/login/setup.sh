@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# 載入配置
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../config/config.sh"
 
-# 設定錯誤處理
-set -e
+# 設定基本變數（在載入配置之前）
+TELL_ME_HOME="$HOME/Tell_Me"
+TELL_ME_LOGS="$TELL_ME_HOME/logs"
 
 # 建立日誌目錄
 mkdir -p "$TELL_ME_LOGS"
@@ -18,18 +17,42 @@ log() {
 
 log "開始設定登入通知"
 
+# 檢查配置檔案是否存在
+if [ ! -f "$SCRIPT_DIR/../config/config.sh" ]; then
+    log "錯誤: 找不到配置檔案 $SCRIPT_DIR/../config/config.sh"
+    exit 1
+fi
+
+# 載入配置
+source "$SCRIPT_DIR/../config/config.sh"
+log "配置檔案載入成功"
+
 SCRIPT_PATH="$TELL_ME_LOGIN/notify.sh"
 PAM_FILE="/etc/pam.d/sshd"
+
+log "檢查腳本路徑: $SCRIPT_PATH"
 
 # 確保腳本存在
 if [ ! -f "$SCRIPT_PATH" ]; then
     log "錯誤: 找不到登入通知腳本 $SCRIPT_PATH"
+    log "檢查目錄內容:"
+    ls -la "$TELL_ME_LOGIN/" | tee -a "$LOG_FILE"
     exit 1
 fi
+
+log "腳本檔案存在，檢查權限"
 
 # 確保腳本有執行權限
 chmod +x "$SCRIPT_PATH"
 log "已設定登入通知腳本執行權限"
+
+# 檢查 PAM 檔案是否存在
+if [ ! -f "$PAM_FILE" ]; then
+    log "錯誤: 找不到 PAM 檔案 $PAM_FILE"
+    exit 1
+fi
+
+log "檢查 PAM 設定"
 
 # 確保 PAM 裡有這行，沒有才加
 if ! grep -q "$SCRIPT_PATH" "$PAM_FILE"; then

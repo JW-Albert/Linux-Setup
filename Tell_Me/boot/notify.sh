@@ -1,11 +1,10 @@
 #!/bin/bash
 
-# 載入配置
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../config/config.sh"
 
-# 設定錯誤處理
-set -e
+# 設定基本變數（在載入配置之前）
+TELL_ME_HOME="$HOME/Tell_Me"
+TELL_ME_LOGS="$TELL_ME_HOME/logs"
 
 # 建立日誌目錄
 mkdir -p "$TELL_ME_LOGS"
@@ -17,6 +16,16 @@ log() {
 }
 
 log "開始執行開機後通知腳本"
+
+# 檢查配置檔案是否存在
+if [ ! -f "$SCRIPT_DIR/../config/config.sh" ]; then
+    log "錯誤: 找不到配置檔案 $SCRIPT_DIR/../config/config.sh"
+    exit 1
+fi
+
+# 載入配置
+source "$SCRIPT_DIR/../config/config.sh"
+log "配置檔案載入成功"
 
 # Email configuration (使用統一配置)
 SMTP_SERVER="$SMTP_SERVER"

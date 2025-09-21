@@ -51,10 +51,13 @@ TEST_MESSAGE="🧪 **Tell_Me 測試通知**
 
 # 發送測試訊息
 echo "發送測試訊息到 Discord..."
-curl -H "Content-Type: application/json" \
-     -X POST \
-     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$TEST_MESSAGE\"}" \
-     "$DISCORD_WEBHOOK_URL"
+printf '{"username":"%s","avatar_url":"%s","content":"%s"}' \
+    "$DISCORD_USERNAME" \
+    "$DISCORD_AVATAR_URL" \
+    "$TEST_MESSAGE" | curl -H "Content-Type: application/json" \
+    -X POST \
+    --data-binary @- \
+    "$DISCORD_WEBHOOK_URL"
 
 if [ $? -eq 0 ]; then
     echo ""

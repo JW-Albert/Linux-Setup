@@ -71,10 +71,14 @@ DISCORD_MESSAGE="🚀 **系統開機通知**
 log "開始發送 Discord 通知..."
 log "Webhook URL: $DISCORD_WEBHOOK_URL"
 
-curl -H "Content-Type: application/json" \
-     -X POST \
-     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$DISCORD_MESSAGE\"}" \
-     "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
+# 使用 printf 來正確處理換行符號
+printf '{"username":"%s","avatar_url":"%s","content":"%s"}' \
+    "$DISCORD_USERNAME" \
+    "$DISCORD_AVATAR_URL" \
+    "$DISCORD_MESSAGE" | curl -H "Content-Type: application/json" \
+    -X POST \
+    --data-binary @- \
+    "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
 
 # Check if Discord notification was sent successfully
 if [ $? -eq 0 ]; then

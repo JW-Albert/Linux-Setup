@@ -72,11 +72,19 @@ check_dependencies() {
 # 檢查服務狀態函數
 check_service_status() {
     local service_name="$1"
-    if systemctl is-active --quiet "$service_name"; then
-        log "服務 $service_name 正在運行"
-        return 0
+    local status=$(systemctl is-active "$service_name")
+    
+    if [ "$status" = "active" ] || [ "$status" = "inactive" ]; then
+        # 對於 oneshot 服務，active 或 inactive 都是正常狀態
+        if [ "$service_name" = "boot-notify.service" ]; then
+            log "服務 $service_name 狀態: $status (oneshot 服務正常)"
+            return 0
+        else
+            log "服務 $service_name 狀態: $status"
+            return 0
+        fi
     else
-        log "服務 $service_name 未運行"
+        log "服務 $service_name 狀態異常: $status"
         return 1
     fi
 }

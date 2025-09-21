@@ -6,6 +6,7 @@ After=network.target
 Type=oneshot
 ExecStart=/etc/tell_me/boot/notify.sh
 User=root
+RemainAfterExit=yes
 
 [Install]
 WantedBy=multi-user.target 

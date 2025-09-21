@@ -51,6 +51,7 @@ curl -H "Content-Type: application/json" \
 # Check if Discord notification was sent successfully
 if [ $? -eq 0 ]; then
     log "開機後通知 Discord 發送成功"
+    exit 0
 else
     log "開機後通知 Discord 發送失敗"
     exit 1

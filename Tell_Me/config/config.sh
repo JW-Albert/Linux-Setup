@@ -13,7 +13,7 @@ TELL_ME_BOOT="$TELL_ME_HOME/boot"
 SMTP_SERVER="smtp.gmail.com"
 SMTP_PORT="587"
 SENDER_EMAIL="jw.albert.tw@gmail.com"
-SENDER_PASSWORD="cnbhqiltcgbqpvpo"  # Use App Password for Gmail
+SENDER_PASSWORD="fxgpxnxjleznhwgu"  # Use App Password for Gmail
 RECIPIENT_EMAIL="albert@mail.jw-albert.tw"
 
 # 日誌配置

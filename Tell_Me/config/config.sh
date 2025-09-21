@@ -19,6 +19,15 @@ DISCORD_USERNAME="Tell_Me Bot"
 # DISCORD_AVATAR_URL="https://example.com/your-custom-avatar.png"
 # DISCORD_AVATAR_URL="https://raw.githubusercontent.com/username/repo/main/avatar.png"
 # DISCORD_AVATAR_URL="https://i.imgur.com/your-image-id.png"
+
+# 系統內建圖示選項：
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/0.png"  # 預設機器人
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/1.png"  # 機器人 1
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/2.png"  # 機器人 2
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/3.png"  # 機器人 3
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/4.png"  # 機器人 4
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/5.png"  # 機器人 5
+
 DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/0.png"
 
 # 日誌配置

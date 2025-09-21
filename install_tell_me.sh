@@ -44,12 +44,12 @@ fi
 
 # 複製管理工具到管理目錄
 log "複製管理工具..."
-if [ -f "$SCRIPT_DIR/manage_tell_me.sh" ]; then
-    cp "$SCRIPT_DIR/manage_tell_me.sh" "$TELL_ME_MANAGE/"
+if [ -f "$SCRIPT_DIR/Tell_Me/manage_tell_me.sh" ]; then
+    cp "$SCRIPT_DIR/Tell_Me/manage_tell_me.sh" "$TELL_ME_MANAGE/"
     chmod +x "$TELL_ME_MANAGE/manage_tell_me.sh"
     log "管理工具已複製到: $TELL_ME_MANAGE/manage_tell_me.sh"
 else
-    log "警告: 找不到管理工具 manage_tell_me.sh"
+    log "警告: 找不到管理工具 $SCRIPT_DIR/Tell_Me/manage_tell_me.sh"
 fi
 
 # 設定日誌輪轉

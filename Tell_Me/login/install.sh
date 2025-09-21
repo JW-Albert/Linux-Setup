@@ -40,7 +40,7 @@ chmod +x "$TELL_ME_LOGIN/setup.sh"
 
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."
-sudo cp "$SCRIPT_DIR/notify.service" /etc/systemd/system/
+sudo cp "$SCRIPT_DIR/login-notify.service" /etc/systemd/system/
 
 # 啟用並啟動服務
 log "啟用並啟動服務..."

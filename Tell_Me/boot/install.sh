@@ -37,16 +37,16 @@ mv notify.sh "$TELL_ME_BOOT/"
 
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."
-sudo mv notify.service /etc/systemd/system/
+sudo mv boot-notify.service /etc/systemd/system/
 
 # 啟用並啟動服務
 log "啟用並啟動服務..."
 sudo systemctl daemon-reload
-sudo systemctl enable notify.service
-sudo systemctl start notify.service
+sudo systemctl enable boot-notify.service
+sudo systemctl start boot-notify.service
 
 # 檢查服務狀態
-if systemctl is-active --quiet notify.service; then
+if systemctl is-active --quiet boot-notify.service; then
     log "服務啟動成功"
 else
     log "服務啟動失敗"

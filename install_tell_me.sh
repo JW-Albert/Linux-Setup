@@ -67,7 +67,7 @@ chmod +x "$TELL_ME_HOME/cleanup_logs.sh"
 
 # 檢查所有服務狀態
 log "檢查服務狀態..."
-services=("login-notify.service" "notify.service")
+services=("login-notify.service" "boot-notify.service")
 for service in "${services[@]}"; do
     if check_service_status "$service"; then
         log "✓ $service 運行正常"

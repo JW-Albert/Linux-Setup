@@ -5,7 +5,7 @@
 
 # 載入配置
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/Tell_Me/config/config.sh"
+source "/etc/tell_me/config/config.sh"
 
 # 顏色定義
 RED='\033[0;31m'
@@ -206,10 +206,11 @@ reinstall_services() {
 # 顯示配置資訊
 show_config() {
     echo -e "${BLUE}Tell_Me 配置資訊：${NC}"
-    echo "主目錄: $TELL_ME_HOME"
+    echo "系統服務目錄: $TELL_ME_SYSTEM"
     echo "日誌目錄: $TELL_ME_LOGS"
     echo "登入通知: $TELL_ME_LOGIN"
     echo "開機通知: $TELL_ME_BOOT"
+    echo "管理工具: $TELL_ME_MANAGE"
     echo "Discord 機器人: $DISCORD_USERNAME"
     echo "Discord Webhook: ${DISCORD_WEBHOOK_URL:0:50}..."
     echo "日誌保留天數: $LOG_RETENTION_DAYS"

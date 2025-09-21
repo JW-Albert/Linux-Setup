@@ -8,7 +8,7 @@ source "$SCRIPT_DIR/../config/config.sh"
 set -e
 
 # 建立日誌目錄
-mkdir -p "$TELL_ME_LOGS"
+sudo mkdir -p "$TELL_ME_LOGS"
 LOG_FILE="$TELL_ME_LOGS/login_notify.log"
 
 # 日誌函數

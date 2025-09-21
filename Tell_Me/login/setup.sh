@@ -3,11 +3,10 @@
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # 設定基本變數（在載入配置之前）
-TELL_ME_HOME="$HOME/Tell_Me"
-TELL_ME_LOGS="$TELL_ME_HOME/logs"
+TELL_ME_LOGS="/var/log/tell_me"
 
 # 建立日誌目錄
-mkdir -p "$TELL_ME_LOGS"
+sudo mkdir -p "$TELL_ME_LOGS"
 LOG_FILE="$TELL_ME_LOGS/setup_login_notify.log"
 
 # 日誌函數

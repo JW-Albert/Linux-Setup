@@ -55,30 +55,31 @@ Terminal: $TERM
 Session: $SSH_TTY
 "
 
-log "準備發送登入通知郵件到: $RECIPIENT_EMAIL"
+log "準備發送登入通知到 Discord"
 
-# 發送郵件
-log "開始發送郵件..."
-log "SMTP 伺服器: $SMTP_SERVER:$SMTP_PORT"
-log "發送者: $SENDER_EMAIL"
-log "接收者: $RECIPIENT_EMAIL"
+# 建立 Discord 訊息
+DISCORD_MESSAGE="🔐 **登入通知**
 
-echo "Subject: $SUBJECT
+**使用者**: $USER_NAME
+**主機**: $HOSTNAME
+**時間**: $DATE
+**來源 IP**: $IP_ADDR
+**終端**: $TERM
+**會話**: $SSH_TTY"
 
-$BODY" | curl -v \
-    --url "smtp://$SMTP_SERVER:$SMTP_PORT" \
-    --mail-from "$SENDER_EMAIL" \
-    --mail-rcpt "$RECIPIENT_EMAIL" \
-    --ssl-reqd \
-    --user "$SENDER_EMAIL:$SENDER_PASSWORD" \
-    --upload-file - \
-    --mail-rcpt-allowfails \
-    --fail-with-body 2>&1 | tee -a "$LOG_FILE"
+# 發送 Discord 通知
+log "開始發送 Discord 通知..."
+log "Webhook URL: $DISCORD_WEBHOOK_URL"
 
-# 檢查郵件發送結果
+curl -H "Content-Type: application/json" \
+     -X POST \
+     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$DISCORD_MESSAGE\"}" \
+     "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
+
+# 檢查 Discord 通知發送結果
 if [ $? -eq 0 ]; then
-    log "登入通知郵件發送成功"
+    log "登入通知 Discord 發送成功"
 else
-    log "登入通知郵件發送失敗"
+    log "登入通知 Discord 發送失敗"
     exit 1
 fi

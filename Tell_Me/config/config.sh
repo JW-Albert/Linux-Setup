@@ -9,12 +9,10 @@ TELL_ME_LOGS="$TELL_ME_HOME/logs"
 TELL_ME_LOGIN="$TELL_ME_HOME/login"
 TELL_ME_BOOT="$TELL_ME_HOME/boot"
 
-# Email 配置
-SMTP_SERVER="smtp.gmail.com"
-SMTP_PORT="587"
-SENDER_EMAIL="jw.albert.tw@gmail.com"
-SENDER_PASSWORD="fxgpxnxjleznhwgu"  # Use App Password for Gmail
-RECIPIENT_EMAIL="albert@mail.jw-albert.tw"
+# Discord Webhook 配置
+DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1419203705751994420/UE2we0TjTDflXdHadPAM9EWZV_BPsSRxbJ4f0ooM1oP1pNBcSYS1hUQpJouWtd7pNA8E"
+DISCORD_USERNAME="Tell_Me Bot"
+DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/0.png"
 
 # 日誌配置
 LOG_RETENTION_DAYS=30

@@ -54,30 +54,32 @@ Disk Usage: $(df -h / | awk 'NR==2 {print $5}')
 Memory Usage: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')
 "
 
-log "準備發送開機後通知郵件到: $RECIPIENT_EMAIL"
+log "準備發送開機後通知到 Discord"
 
-# Send email using curl
-log "開始發送郵件..."
-log "SMTP 伺服器: $SMTP_SERVER:$SMTP_PORT"
-log "發送者: $SENDER_EMAIL"
-log "接收者: $RECIPIENT_EMAIL"
+# 建立 Discord 訊息
+DISCORD_MESSAGE="🚀 **系統開機通知**
 
-echo "Subject: $SUBJECT
+**主機名**: $HOSTNAME
+**IP 地址**: $IP_ADDRESS
+**開機時間**: $DATE
+**運行時間**: $(uptime -p)
+**負載平均**: $(uptime | awk -F'load average:' '{print $2}')
+**磁碟使用率**: $(df -h / | awk 'NR==2 {print $5}')
+**記憶體使用率**: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')"
 
-$BODY" | curl -v \
-    --url "smtp://$SMTP_SERVER:$SMTP_PORT" \
-    --mail-from "$SENDER_EMAIL" \
-    --mail-rcpt "$RECIPIENT_EMAIL" \
-    --ssl-reqd \
-    --user "$SENDER_EMAIL:$SENDER_PASSWORD" \
-    --upload-file - \
-    --mail-rcpt-allowfails \
-    --fail-with-body 2>&1 | tee -a "$LOG_FILE"
+# 發送 Discord 通知
+log "開始發送 Discord 通知..."
+log "Webhook URL: $DISCORD_WEBHOOK_URL"
 
-# Check if email was sent successfully
+curl -H "Content-Type: application/json" \
+     -X POST \
+     -d "{\"username\":\"$DISCORD_USERNAME\",\"avatar_url\":\"$DISCORD_AVATAR_URL\",\"content\":\"$DISCORD_MESSAGE\"}" \
+     "$DISCORD_WEBHOOK_URL" 2>&1 | tee -a "$LOG_FILE"
+
+# Check if Discord notification was sent successfully
 if [ $? -eq 0 ]; then
-    log "開機後通知郵件發送成功"
+    log "開機後通知 Discord 發送成功"
 else
-    log "開機後通知郵件發送失敗"
+    log "開機後通知 Discord 發送失敗"
     exit 1
 fi 

@@ -17,13 +17,14 @@ log() {
 log "開始執行開機後通知腳本"
 
 # 檢查配置檔案是否存在
-if [ ! -f "$SCRIPT_DIR/../config/config.sh" ]; then
-    log "錯誤: 找不到配置檔案 $SCRIPT_DIR/../config/config.sh"
+CONFIG_FILE="/etc/tell_me/config/config.sh"
+if [ ! -f "$CONFIG_FILE" ]; then
+    log "錯誤: 找不到配置檔案 $CONFIG_FILE"
     exit 1
 fi
 
 # 載入配置
-source "$SCRIPT_DIR/../config/config.sh"
+source "$CONFIG_FILE"
 log "配置檔案載入成功"
 
 # Get system information

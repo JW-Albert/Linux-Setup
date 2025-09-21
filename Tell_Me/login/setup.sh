@@ -17,17 +17,18 @@ log() {
 log "開始設定登入通知"
 
 # 檢查配置檔案是否存在
-if [ ! -f "$SCRIPT_DIR/../config/config.sh" ]; then
-    log "錯誤: 找不到配置檔案 $SCRIPT_DIR/../config/config.sh"
+CONFIG_FILE="/etc/tell_me/config/config.sh"
+if [ ! -f "$CONFIG_FILE" ]; then
+    log "錯誤: 找不到配置檔案 $CONFIG_FILE"
     exit 1
 fi
 
 # 載入配置
-source "$SCRIPT_DIR/../config/config.sh"
+source "$CONFIG_FILE"
 log "配置檔案載入成功"
 
 # 檢查變數是否正確設定
-log "TELL_ME_HOME: $TELL_ME_HOME"
+log "TELL_ME_SYSTEM: $TELL_ME_SYSTEM"
 log "TELL_ME_LOGIN: $TELL_ME_LOGIN"
 
 SCRIPT_PATH="$TELL_ME_LOGIN/notify.sh"

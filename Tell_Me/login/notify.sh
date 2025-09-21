@@ -2,7 +2,7 @@
 
 # 載入配置
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-source "$SCRIPT_DIR/../config/config.sh"
+source "/etc/tell_me/config/config.sh"
 
 # 設定錯誤處理
 set -e

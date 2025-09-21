@@ -25,17 +25,17 @@ sudo apt install -y curl
 
 # 建立目標目錄
 log "建立目錄結構..."
-mkdir -p "$TELL_ME_BOOT"
-mkdir -p "$TELL_ME_LOGS"
-mkdir -p "$TELL_ME_HOME/config"
+sudo mkdir -p "$TELL_ME_BOOT"
+sudo mkdir -p "$TELL_ME_LOGS"
+sudo mkdir -p "$TELL_ME_CONFIG"
 
 # 設定腳本權限並移動
 log "設定腳本權限..."
 chmod +x notify.sh
 
 log "移動檔案到目標目錄..."
-mv notify.sh "$TELL_ME_BOOT/"
-cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_HOME/config/"
+sudo mv notify.sh "$TELL_ME_BOOT/"
+sudo cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_CONFIG/"
 
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."

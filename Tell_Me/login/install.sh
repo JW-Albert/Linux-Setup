@@ -25,20 +25,20 @@ sudo apt install -y curl
 
 # 建立目錄結構
 log "建立目錄結構..."
-mkdir -p "$TELL_ME_LOGIN"
-mkdir -p "$TELL_ME_LOGS"
-mkdir -p "$TELL_ME_HOME/config"
+sudo mkdir -p "$TELL_ME_LOGIN"
+sudo mkdir -p "$TELL_ME_LOGS"
+sudo mkdir -p "$TELL_ME_CONFIG"
 
 # 複製腳本到目標目錄
 log "複製腳本到目標目錄..."
-cp "$SCRIPT_DIR/notify.sh" "$TELL_ME_LOGIN/"
-cp "$SCRIPT_DIR/setup.sh" "$TELL_ME_LOGIN/"
-cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_HOME/config/"
+sudo cp "$SCRIPT_DIR/notify.sh" "$TELL_ME_LOGIN/"
+sudo cp "$SCRIPT_DIR/setup.sh" "$TELL_ME_LOGIN/"
+sudo cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_CONFIG/"
 
 # 設定腳本權限
 log "設定腳本權限..."
-chmod +x "$TELL_ME_LOGIN/notify.sh"
-chmod +x "$TELL_ME_LOGIN/setup.sh"
+sudo chmod +x "$TELL_ME_LOGIN/notify.sh"
+sudo chmod +x "$TELL_ME_LOGIN/setup.sh"
 
 # 安裝 systemd 服務
 log "安裝 systemd 服務..."

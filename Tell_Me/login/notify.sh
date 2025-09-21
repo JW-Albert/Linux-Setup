@@ -26,20 +26,46 @@ SENDER_PASSWORD="$SENDER_PASSWORD"
 RECIPIENT_EMAIL="$RECIPIENT_EMAIL"
 
 # 獲取登入資訊
-USER_NAME=$(whoami)
+# 嘗試多種方法獲取實際登入使用者
+USER_NAME=""
+if [ -n "$PAM_USER" ]; then
+    USER_NAME="$PAM_USER"
+elif [ -n "$USER" ]; then
+    USER_NAME="$USER"
+elif [ -n "$LOGNAME" ]; then
+    USER_NAME="$LOGNAME"
+else
+    USER_NAME=$(whoami)
+fi
+
 HOSTNAME=$(hostname)
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
-IP_ADDR=$(echo $SSH_CONNECTION | awk '{print $1}')
 
-# 如果沒有 SSH_CONNECTION 環境變數，嘗試其他方法獲取 IP
-if [ -z "$IP_ADDR" ]; then
+# 獲取來源 IP 地址
+IP_ADDR=""
+if [ -n "$SSH_CONNECTION" ]; then
+    IP_ADDR=$(echo $SSH_CONNECTION | awk '{print $1}')
+elif [ -n "$SSH_CLIENT" ]; then
+    IP_ADDR=$(echo $SSH_CLIENT | awk '{print $1}')
+else
+    # 嘗試從 who 命令獲取
     IP_ADDR=$(who am i | awk '{print $5}' | sed 's/[()]//g')
 fi
 
 # 如果還是沒有 IP，使用本地 IP
-if [ -z "$IP_ADDR" ]; then
+if [ -z "$IP_ADDR" ] || [ "$IP_ADDR" = "localhost" ]; then
     IP_ADDR=$(hostname -I | awk '{print $1}')
 fi
+
+# 調試資訊
+log "環境變數調試:"
+log "  PAM_USER: $PAM_USER"
+log "  USER: $USER"
+log "  LOGNAME: $LOGNAME"
+log "  SSH_CONNECTION: $SSH_CONNECTION"
+log "  SSH_CLIENT: $SSH_CLIENT"
+log "  TERM: $TERM"
+log "  SSH_TTY: $SSH_TTY"
 
 log "登入資訊 - 使用者: $USER_NAME, 主機: $HOSTNAME, IP: $IP_ADDR"
 

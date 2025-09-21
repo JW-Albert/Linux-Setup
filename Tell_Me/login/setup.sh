@@ -59,7 +59,7 @@ log "檢查 PAM 設定"
 
 # 確保 PAM 裡有這行，沒有才加
 if ! grep -q "$SCRIPT_PATH" "$PAM_FILE"; then
-    echo "session optional pam_exec.so seteuid $SCRIPT_PATH" >> "$PAM_FILE"
+    echo "session optional pam_exec.so $SCRIPT_PATH" >> "$PAM_FILE"
     log "PAM sshd 已加上 notify.sh 設定"
 else
     log "PAM sshd 已經存在 notify.sh 設定"

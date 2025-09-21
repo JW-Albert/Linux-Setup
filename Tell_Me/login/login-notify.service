@@ -4,8 +4,9 @@ After=network.target
 
 [Service]
 Type=oneshot
-ExecStart=$HOME/Tell_Me/login/setup.sh
+ExecStart=/root/Tell_Me/login/setup.sh
 RemainAfterExit=true
+User=root
 
 [Install]
 WantedBy=multi-user.target

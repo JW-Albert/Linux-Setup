@@ -44,6 +44,11 @@ chmod +x "$TELL_ME_LOGIN/setup.sh"
 log "安裝 systemd 服務..."
 # 複製服務檔案並替換路徑
 sed "s|ExecStart=.*|ExecStart=$TELL_ME_LOGIN/setup.sh|" "$SCRIPT_DIR/login-notify.service" | sudo tee /etc/systemd/system/login-notify.service > /dev/null
+log "服務檔案已安裝: /etc/systemd/system/login-notify.service"
+
+# 檢查服務檔案內容
+log "檢查服務檔案內容:"
+sudo cat /etc/systemd/system/login-notify.service | tee -a "$LOG_FILE"
 
 # 啟用並啟動服務
 log "啟用並啟動服務..."

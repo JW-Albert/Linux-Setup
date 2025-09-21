@@ -27,6 +27,10 @@ fi
 source "$SCRIPT_DIR/../config/config.sh"
 log "配置檔案載入成功"
 
+# 檢查變數是否正確設定
+log "TELL_ME_HOME: $TELL_ME_HOME"
+log "TELL_ME_LOGIN: $TELL_ME_LOGIN"
+
 SCRIPT_PATH="$TELL_ME_LOGIN/notify.sh"
 PAM_FILE="/etc/pam.d/sshd"
 

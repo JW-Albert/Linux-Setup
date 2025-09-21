@@ -58,9 +58,14 @@ Session: $SSH_TTY
 log "準備發送登入通知郵件到: $RECIPIENT_EMAIL"
 
 # 發送郵件
+log "開始發送郵件..."
+log "SMTP 伺服器: $SMTP_SERVER:$SMTP_PORT"
+log "發送者: $SENDER_EMAIL"
+log "接收者: $RECIPIENT_EMAIL"
+
 echo "Subject: $SUBJECT
 
-$BODY" | curl -s \
+$BODY" | curl -v \
     --url "smtp://$SMTP_SERVER:$SMTP_PORT" \
     --mail-from "$SENDER_EMAIL" \
     --mail-rcpt "$RECIPIENT_EMAIL" \
@@ -68,7 +73,7 @@ $BODY" | curl -s \
     --user "$SENDER_EMAIL:$SENDER_PASSWORD" \
     --upload-file - \
     --mail-rcpt-allowfails \
-    --fail-with-body
+    --fail-with-body 2>&1 | tee -a "$LOG_FILE"
 
 # 檢查郵件發送結果
 if [ $? -eq 0 ]; then

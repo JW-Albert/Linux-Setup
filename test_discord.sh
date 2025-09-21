@@ -41,14 +41,7 @@ echo ""
 echo "=== 測試 Discord 通知 ==="
 
 # 建立測試訊息
-TEST_MESSAGE="🧪 **Tell_Me 測試通知**\n\n"
-TEST_MESSAGE+="📋 **測試資訊**\n"
-TEST_MESSAGE+="```\n"
-TEST_MESSAGE+="測試時間: $(date '+%Y-%m-%d %H:%M:%S')\n"
-TEST_MESSAGE+="主機名: $(hostname)\n"
-TEST_MESSAGE+="IP 地址: $(hostname -I | awk '{print $1}')\n"
-TEST_MESSAGE+="```\n\n"
-TEST_MESSAGE+="✅ 如果您看到這則訊息，表示 Tell_Me Discord 通知功能運作正常！ 🎉"
+TEST_MESSAGE="🧪 **Tell_Me 測試通知**\n\n📋 **測試資訊**\n\`\`\`\n測試時間: $(date '+%Y-%m-%d %H:%M:%S')\n主機名: $(hostname)\nIP 地址: $(hostname -I | awk '{print $1}')\n\`\`\`\n\n✅ 如果您看到這則訊息，表示 Tell_Me Discord 通知功能運作正常！ 🎉"
 
 # 發送測試訊息
 echo "發送測試訊息到 Discord..."

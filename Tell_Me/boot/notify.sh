@@ -37,20 +37,7 @@ log "系統資訊 - 主機名: $HOSTNAME, IP: $IP_ADDRESS"
 log "準備發送開機後通知到 Discord"
 
 # 建立 Discord 訊息
-DISCORD_MESSAGE="🚀 **系統開機通知**\n\n"
-DISCORD_MESSAGE+="📊 **系統資訊**\n"
-DISCORD_MESSAGE+="```\n"
-DISCORD_MESSAGE+="主機名: $HOSTNAME\n"
-DISCORD_MESSAGE+="IP 地址: $IP_ADDRESS\n"
-DISCORD_MESSAGE+="開機時間: $DATE\n"
-DISCORD_MESSAGE+="運行時間: $(uptime -p)\n"
-DISCORD_MESSAGE+="```\n\n"
-DISCORD_MESSAGE+="📈 **系統狀態**\n"
-DISCORD_MESSAGE+="```\n"
-DISCORD_MESSAGE+="負載平均: $(uptime | awk -F'load average:' '{print $2}')\n"
-DISCORD_MESSAGE+="磁碟使用率: $(df -h / | awk 'NR==2 {print $5}')\n"
-DISCORD_MESSAGE+="記憶體使用率: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')\n"
-DISCORD_MESSAGE+="```"
+DISCORD_MESSAGE="🚀 **系統開機通知**\n\n📊 **系統資訊**\n\`\`\`\n主機名: $HOSTNAME\nIP 地址: $IP_ADDRESS\n開機時間: $DATE\n運行時間: $(uptime -p)\n\`\`\`\n\n📈 **系統狀態**\n\`\`\`\n負載平均: $(uptime | awk -F'load average:' '{print $2}')\n磁碟使用率: $(df -h / | awk 'NR==2 {print $5}')\n記憶體使用率: $(free -h | awk 'NR==2 {printf "%.1f%%", $3/$2*100}')\n\`\`\`"
 
 # 發送 Discord 通知
 log "開始發送 Discord 通知..."

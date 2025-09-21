@@ -74,19 +74,7 @@ log "登入資訊 - 使用者: $USER_NAME, 主機: $HOSTNAME, IP: $IP_ADDR"
 log "準備發送登入通知到 Discord"
 
 # 建立 Discord 訊息
-DISCORD_MESSAGE="🔐 **登入通知**\n\n"
-DISCORD_MESSAGE+="👤 **使用者資訊**\n"
-DISCORD_MESSAGE+="```\n"
-DISCORD_MESSAGE+="使用者: $USER_NAME\n"
-DISCORD_MESSAGE+="主機: $HOSTNAME\n"
-DISCORD_MESSAGE+="時間: $DATE\n"
-DISCORD_MESSAGE+="```\n\n"
-DISCORD_MESSAGE+="🌐 **連線資訊**\n"
-DISCORD_MESSAGE+="```\n"
-DISCORD_MESSAGE+="來源 IP: $IP_ADDR\n"
-DISCORD_MESSAGE+="終端: $TERM\n"
-DISCORD_MESSAGE+="會話: $SSH_TTY\n"
-DISCORD_MESSAGE+="```"
+DISCORD_MESSAGE="🔐 **登入通知**\n\n👤 **使用者資訊**\n\`\`\`\n使用者: $USER_NAME\n主機: $HOSTNAME\n時間: $DATE\n\`\`\`\n\n🌐 **連線資訊**\n\`\`\`\n來源 IP: $IP_ADDR\n終端: $TERM\n會話: $SSH_TTY\n\`\`\`"
 
 # 發送 Discord 通知
 log "開始發送 Discord 通知..."

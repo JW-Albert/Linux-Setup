@@ -1,6 +1,9 @@
 #!/bin/bash
 # This script needs to be executed as root!
 
+echo "[INFO] Set root password"
+passwd
+
 echo "[INFO] Update and upgrade apt"
 apt update && apt upgrade -y
 

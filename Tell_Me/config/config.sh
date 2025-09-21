@@ -27,8 +27,9 @@ DISCORD_USERNAME="Tell_Me Bot"
 # DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/3.png"  # 機器人 3
 # DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/4.png"  # 機器人 4
 # DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/5.png"  # 機器人 5
+# DISCORD_AVATAR_URL="https://raw.githubusercontent.com/JW-Albert/Linux-Setup/refs/heads/main/Tell_Me/config/icon.png" # icon.png 通知圖案
 
-DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/0.png"
+DISCORD_AVATAR_URL="https://raw.githubusercontent.com/JW-Albert/Linux-Setup/refs/heads/main/Tell_Me/config/icon.png"
 
 # 日誌配置
 LOG_RETENTION_DAYS=30

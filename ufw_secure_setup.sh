@@ -1,76 +1,76 @@
 #!/bin/bash
 
-set -e  # 如果有錯誤就中斷腳本
+set -e  # Exit script if there is an error
 
-# === 基本設定 ===
-echo "[SETUP] 備份 sshd_config..."
+# === Basic Settings ===
+echo "[SETUP] Backing up sshd_config..."
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak.$(date +%s)
 
-# === 1. 讀取 SSH Port ===
-read -p "[INPUT] 請輸入新的 SSH Port（預設為 55555）: " ssh_port
+# === 1. Read SSH Port ===
+read -p "[INPUT] Please enter new SSH Port (default: 55555): " ssh_port
 ssh_port=${ssh_port:-55555}
-echo "[INFO] 設定 SSH Port 為 $ssh_port"
+echo "[INFO] Setting SSH Port to $ssh_port"
 
-# 修改 SSH Port
+# Modify SSH Port
 sudo sed -i '/^#\?Port /d' /etc/ssh/sshd_config
 echo "Port $ssh_port" | sudo tee -a /etc/ssh/sshd_config
 
-# === 2. 是否允許 root 登入 ===
-read -p "[INPUT] 是否允許 root 使用 SSH 登入？(yes/no，預設 no): " allow_root
+# === 2. Allow root login? ===
+read -p "[INPUT] Allow root SSH login? (yes/no, default: no): " allow_root
 allow_root=${allow_root:-no}
-echo "[INFO] 設定 PermitRootLogin 為 $allow_root"
+echo "[INFO] Setting PermitRootLogin to $allow_root"
 
-# 修改 root 登入設定
+# Modify root login settings
 sudo sed -i '/^#\?PermitRootLogin /d' /etc/ssh/sshd_config
 echo "PermitRootLogin $allow_root" | sudo tee -a /etc/ssh/sshd_config
 
-# === 3. 啟用 port 80 與 443？ ===
-read -p "[INPUT] 是否開放 port 80？(y/N): " open_80
-read -p "[INPUT] 是否開放 port 443？(y/N): " open_443
+# === 3. Enable port 80 and 443? ===
+read -p "[INPUT] Open port 80? (y/N): " open_80
+read -p "[INPUT] Open port 443? (y/N): " open_443
 
-# === 4. 重新啟動 SSH ===
-echo "[INFO] 重新啟動 SSH 服務..."
+# === 4. Restart SSH ===
+echo "[INFO] Restarting SSH service..."
 sudo systemctl restart ssh
 
-# === 5. 安裝並設定 ufw 防火牆 ===
-echo "[INFO] 安裝 ufw（Uncomplicated Firewall）..."
+# === 5. Install and configure ufw firewall ===
+echo "[INFO] Installing ufw (Uncomplicated Firewall)..."
 # sudo apt update -y
 sudo apt install ufw -y
 
-echo "[INFO] 設定預設防火牆規則：拒絕所有輸入、允許所有輸出"
+echo "[INFO] Setting default firewall rules: deny all incoming, allow all outgoing"
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
 
-echo "[INFO] 開放 TCP port $ssh_port"
+echo "[INFO] Opening TCP port $ssh_port"
 sudo ufw allow "$ssh_port"/tcp
 
 if [[ $open_80 =~ ^[yY]$ ]]; then
-  echo "[INFO] 開放 TCP port 80"
+  echo "[INFO] Opening TCP port 80"
   sudo ufw allow 80/tcp
 fi
 
 if [[ $open_443 =~ ^[yY]$ ]]; then
-  echo "[INFO] 開放 TCP port 443"
+  echo "[INFO] Opening TCP port 443"
   sudo ufw allow 443/tcp
 fi
 
-echo "[INFO] 啟用 ufw 防火牆..."
+echo "[INFO] Enabling ufw firewall..."
 sudo ufw --force enable
 
-# === 6. 修改 ICMP DROP ===
-echo "[INFO] 備份 before.rules..."
+# === 6. Modify ICMP DROP ===
+echo "[INFO] Backing up before.rules..."
 sudo cp /etc/ufw/before.rules /etc/ufw/before.rules.bak.$(date +%s)
 
-echo "[INFO] 修改 ICMP echo-request 規則為 DROP..."
+echo "[INFO] Modifying ICMP echo-request rule to DROP..."
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type destination-unreachable/s/ACCEPT/DROP/' /etc/ufw/before.rules
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type time-exceeded/s/ACCEPT/DROP/' /etc/ufw/before.rules
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type parameter-problem/s/ACCEPT/DROP/' /etc/ufw/before.rules
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type echo-request/s/ACCEPT/DROP/' /etc/ufw/before.rules
 
-echo "[INFO] 重新載入 ufw 防火牆規則..."
+echo "[INFO] Reloading ufw firewall rules..."
 sudo ufw reload
 
-# === 完成提示 ===
+# === Completion prompt ===
 echo
-echo "[DONE] 所有設定已完成！"
-echo "[INFO] 請使用 SSH port $ssh_port 登入系統。"
+echo "[DONE] All settings completed!"
+echo "[INFO] Please use SSH port $ssh_port to login to the system."

@@ -1,42 +1,42 @@
 #!/bin/bash
 
-echo "[INFO] 更新 apt"
+echo "[INFO] Updating apt"
 sudo apt update -y && sudo apt upgrade -y
 
-echo "[INFO] 安裝 systemd-timesyncd"
+echo "[INFO] Installing systemd-timesyncd"
 sudo apt install systemd-timesyncd -y
 
-echo "[INFO] 安裝 hwclock 套件 util-linux-extra"
+echo "[INFO] Installing hwclock package util-linux-extra"
 sudo apt install util-linux-extra -y
 
-echo "[INFO] 設定時區為 Asia/Taipei"
+echo "[INFO] Setting timezone to Asia/Taipei"
 sudo timedatectl set-timezone Asia/Taipei
 
-echo "[INFO] 啟用並啟動時間同步服務"
+echo "[INFO] Enabling and starting time sync service"
 sudo systemctl enable systemd-timesyncd --now
 
-echo "[INFO] 備份原始 timesyncd.conf"
+echo "[INFO] Backing up original timesyncd.conf"
 sudo cp /etc/systemd/timesyncd.conf /etc/systemd/timesyncd.conf.bak.$(date +%s)
 
-echo "[INFO] 清除舊 NTP 設定"
+echo "[INFO] Clearing old NTP settings"
 sudo sed -i '/^NTP=/d' /etc/systemd/timesyncd.conf
 sudo sed -i '/^FallbackNTP=/d' /etc/systemd/timesyncd.conf
 
-echo "[INFO] 確保 [Time] 區塊存在"
+echo "[INFO] Ensuring [Time] section exists"
 if ! grep -q "^\[Time\]" /etc/systemd/timesyncd.conf; then
     echo "[Time]" | sudo tee -a /etc/systemd/timesyncd.conf
 fi
 
-echo "[INFO] 設定 NTP 為台灣標準時間伺服器"
+echo "[INFO] Setting NTP to Taiwan Standard Time servers"
 sudo sed -i '/^\[Time\]/a NTP=tick.stdtime.gov.tw tock.stdtime.gov.tw time.stdtime.gov.tw watch.stdtime.gov.tw clock.stdtime.gov.tw' /etc/systemd/timesyncd.conf
 
-echo "[INFO] 重新啟動 timesyncd 並啟用 NTP 同步"
+echo "[INFO] Restarting timesyncd and enabling NTP sync"
 sudo systemctl restart systemd-timesyncd
 sudo timedatectl set-ntp true
 
-echo "[INFO] 將系統時間寫入硬體時鐘"
+echo "[INFO] Writing system time to hardware clock"
 sudo hwclock --systohc
 
-echo "[INFO] 顯示目前時間狀態"
+echo "[INFO] Displaying current time status"
 sudo timedatectl
 sudo hwclock --show

@@ -1,25 +1,25 @@
 #!/bin/bash
 
-echo "[INFO] 更新 apt"
+echo "[INFO] Updating apt"
 sudo apt update && sudo apt upgrade -y
 
-echo "[INFO] 安裝 wget"
+echo "[INFO] Installing wget"
 sudo apt install -y wget
 
-echo "[INFO] Docker 安裝"
+echo "[INFO] Docker installation"
 wget -qO- get.docker.com | sudo bash
 
-echo "[INFO] Docker 版本"
+echo "[INFO] Docker version"
 sudo docker -v
 
-echo "[INFO] 設定開機自動啟動 Docker"
+echo "[INFO] Setting Docker to start automatically on boot"
 sudo systemctl enable docker
 
-echo "[INFO] Docker Compose 安裝"
+echo "[INFO] Docker Compose installation"
 sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-echo "[INFO] 賦權 Docker Compose"
+echo "[INFO] Granting permissions to Docker Compose"
 sudo chmod +x /usr/local/bin/docker-compose
 
-echo "[INFO] Docker Compose 版本"
+echo "[INFO] Docker Compose version"
 sudo docker-compose --version

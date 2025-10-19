@@ -1,59 +1,59 @@
 #!/bin/bash
 
-# Tell_Me 統一安裝腳本
-# 此腳本會安裝所有 Tell_Me 相關的服務
+# Tell_Me unified installation script
+# This script installs all Tell_Me related services
 
-# 設定錯誤處理
+# Set error handling
 set -e
 
-# 載入配置
+# Load configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/Tell_Me/config/config.sh"
 
-# 建立目錄結構
+# Create directory structure
 create_tell_me_structure
 
-log "開始安裝 Tell_Me 服務套件"
+log "Starting Tell_Me service package installation"
 
-# 檢查依賴
-log "檢查系統依賴..."
+# Check dependencies
+log "Checking system dependencies..."
 if ! check_dependencies; then
-    log "安裝缺少的依賴..."
+    log "Installing missing dependencies..."
     sudo apt update
     sudo apt install -y curl
 fi
 
-# 安裝登入通知服務
-log "安裝登入通知服務..."
+# Install login notification service
+log "Installing login notification service..."
 if [ -f "$SCRIPT_DIR/Tell_Me/login/install.sh" ]; then
     bash "$SCRIPT_DIR/Tell_Me/login/install.sh"
-    log "登入通知服務安裝完成"
+    log "Login notification service installation completed"
 else
-    log "警告: 找不到 Tell_Me/login/install.sh"
+    log "Warning: Tell_Me/login/install.sh not found"
 fi
 
-# 安裝開機後通知服務
-log "安裝開機後通知服務..."
+# Install boot notification service
+log "Installing boot notification service..."
 if [ -f "$SCRIPT_DIR/Tell_Me/boot/install.sh" ]; then
     cd "$SCRIPT_DIR/Tell_Me/boot"
     bash install.sh
-    log "開機後通知服務安裝完成"
+    log "Boot notification service installation completed"
 else
-    log "警告: 找不到 Tell_Me/boot/install.sh"
+    log "Warning: Tell_Me/boot/install.sh not found"
 fi
 
-# 複製管理工具到管理目錄
-log "複製管理工具..."
+# Copy management tool to management directory
+log "Copying management tool..."
 if [ -f "$SCRIPT_DIR/Tell_Me/manage_tell_me.sh" ]; then
     cp "$SCRIPT_DIR/Tell_Me/manage_tell_me.sh" "$TELL_ME_MANAGE/"
     chmod +x "$TELL_ME_MANAGE/manage_tell_me.sh"
-    log "管理工具已複製到: $TELL_ME_MANAGE/manage_tell_me.sh"
+    log "Management tool copied to: $TELL_ME_MANAGE/manage_tell_me.sh"
 else
-    log "警告: 找不到管理工具 $SCRIPT_DIR/Tell_Me/manage_tell_me.sh"
+    log "Warning: Management tool $SCRIPT_DIR/Tell_Me/manage_tell_me.sh not found"
 fi
 
-# 設定日誌輪轉
-log "設定日誌輪轉..."
+# Configure log rotation
+log "Configuring log rotation..."
 cat > "$TELL_ME_MANAGE/cleanup_logs.sh" << 'EOF'
 #!/bin/bash
 source "/etc/tell_me/config/config.sh"
@@ -62,40 +62,40 @@ EOF
 
 chmod +x "$TELL_ME_MANAGE/cleanup_logs.sh"
 
-# 建立 crontab 任務清理舊日誌
+# Create crontab task to clean old logs
 (crontab -l 2>/dev/null; echo "0 2 * * * $TELL_ME_MANAGE/cleanup_logs.sh") | crontab -
 
-# 檢查所有服務狀態
-log "檢查服務狀態..."
+# Check all service status
+log "Checking service status..."
 services=("login-notify.service" "boot-notify.service")
 for service in "${services[@]}"; do
     if check_service_status "$service"; then
-        log "✓ $service 運行正常"
+        log "✓ $service running normally"
     else
-        log "✗ $service 需要檢查"
+        log "✗ $service needs checking"
     fi
 done
 
-# 顯示安裝摘要
-log "=== 安裝摘要 ==="
-log "系統服務目錄: $TELL_ME_SYSTEM"
-log "日誌目錄: $TELL_ME_LOGS"
-log "登入通知: $TELL_ME_LOGIN"
-log "開機通知: $TELL_ME_BOOT"
-log "配置檔案: $TELL_ME_CONFIG/config.sh"
-log "管理工具: $TELL_ME_MANAGE"
+# Display installation summary
+log "=== Installation Summary ==="
+log "System service directory: $TELL_ME_SYSTEM"
+log "Log directory: $TELL_ME_LOGS"
+log "Login notification: $TELL_ME_LOGIN"
+log "Boot notification: $TELL_ME_BOOT"
+log "Configuration file: $TELL_ME_CONFIG/config.sh"
+log "Management tool: $TELL_ME_MANAGE"
 
-log "Tell_Me 服務套件安裝完成！"
+log "Tell_Me service package installation completed!"
 log ""
-log "=== 使用說明 ==="
-log "管理工具位置: $TELL_ME_MANAGE/manage_tell_me.sh"
-log "執行管理工具: $TELL_ME_MANAGE/manage_tell_me.sh"
+log "=== Usage Instructions ==="
+log "Management tool location: $TELL_ME_MANAGE/manage_tell_me.sh"
+log "Execute management tool: $TELL_ME_MANAGE/manage_tell_me.sh"
 log ""
-log "您可以查看日誌檔案來監控服務狀態："
-log "  - 登入通知: $TELL_ME_LOGS/login_notify.log"
-log "  - 開機後通知: $TELL_ME_LOGS/notify.log"
-log "  - 登入設定: $TELL_ME_LOGS/setup_login_notify.log"
+log "You can check log files to monitor service status:"
+log "  - Login notification: $TELL_ME_LOGS/login_notify.log"
+log "  - Boot notification: $TELL_ME_LOGS/notify.log"
+log "  - Login setup: $TELL_ME_LOGS/setup_login_notify.log"
 log ""
-log "注意: 安裝完成後可以安全刪除 Linux-Setup 資料夾"
-log "系統服務檔案已複製到 $TELL_ME_SYSTEM/"
-log "管理工具已複製到 $TELL_ME_MANAGE/"
+log "Note: Linux-Setup folder can be safely deleted after installation"
+log "System service files copied to $TELL_ME_SYSTEM/"
+log "Management tool copied to $TELL_ME_MANAGE/"

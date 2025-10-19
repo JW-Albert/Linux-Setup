@@ -1,105 +1,105 @@
 #!/bin/bash
 
-# Tell_Me 統一配置檔案
-# 此檔案包含所有 Tell_Me 相關腳本的共用配置
+# Tell_Me unified configuration file
+# This file contains shared configuration for all Tell_Me related scripts
 
-# 基本目錄設定
-TELL_ME_SYSTEM="/etc/tell_me"                    # 系統服務檔案目錄
-TELL_ME_LOGS="/var/log/tell_me"                  # 日誌檔案目錄
-TELL_ME_LOGIN="$TELL_ME_SYSTEM/login"            # 登入通知服務目錄
-TELL_ME_BOOT="$TELL_ME_SYSTEM/boot"              # 開機通知服務目錄
-TELL_ME_CONFIG="$TELL_ME_SYSTEM/config"          # 配置檔案目錄
-TELL_ME_MANAGE="$HOME/Tell_Me"                   # 管理工具目錄
+# Basic directory settings
+TELL_ME_SYSTEM="/etc/tell_me"                    # System service file directory
+TELL_ME_LOGS="/var/log/tell_me"                  # Log file directory
+TELL_ME_LOGIN="$TELL_ME_SYSTEM/login"            # Login notification service directory
+TELL_ME_BOOT="$TELL_ME_SYSTEM/boot"              # Boot notification service directory
+TELL_ME_CONFIG="$TELL_ME_SYSTEM/config"          # Configuration file directory
+TELL_ME_MANAGE="$HOME/Tell_Me"                   # Management tool directory
 
-# Discord Webhook 配置
+# Discord Webhook configuration
 DISCORD_WEBHOOK_URL="https://discord.com/api/webhooks/1419203705751994420/UE2we0TjTDflXdHadPAM9EWZV_BPsSRxbJ4f0ooM1oP1pNBcSYS1hUQpJouWtd7pNA8E"
 DISCORD_USERNAME="Tell_Me Bot"
-# 自訂頭像 URL - 可以設定為任何有效的圖片 URL
-# 範例：
+# Custom avatar URL - can be set to any valid image URL
+# Examples:
 # DISCORD_AVATAR_URL="https://example.com/your-custom-avatar.png"
 # DISCORD_AVATAR_URL="https://raw.githubusercontent.com/username/repo/main/avatar.png"
 # DISCORD_AVATAR_URL="https://i.imgur.com/your-image-id.png"
 
-# 系統內建圖示選項：
-# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/0.png"  # 預設機器人
-# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/1.png"  # 機器人 1
-# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/2.png"  # 機器人 2
-# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/3.png"  # 機器人 3
-# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/4.png"  # 機器人 4
-# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/5.png"  # 機器人 5
-# DISCORD_AVATAR_URL="https://raw.githubusercontent.com/JW-Albert/Linux-Setup/refs/heads/main/Tell_Me/config/icon.png" # icon.png 通知圖案
+# Built-in icon options:
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/0.png"  # Default bot
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/1.png"  # Bot 1
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/2.png"  # Bot 2
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/3.png"  # Bot 3
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/4.png"  # Bot 4
+# DISCORD_AVATAR_URL="https://cdn.discordapp.com/embed/avatars/5.png"  # Bot 5
+# DISCORD_AVATAR_URL="https://raw.githubusercontent.com/JW-Albert/Linux-Setup/refs/heads/main/Tell_Me/config/icon.png" # icon.png notification icon
 
 DISCORD_AVATAR_URL="https://raw.githubusercontent.com/JW-Albert/Linux-Setup/refs/heads/main/Tell_Me/config/icon.png"
 
-# 日誌配置
+# Log configuration
 LOG_RETENTION_DAYS=30
 
-# 建立目錄結構函數
+# Create directory structure function
 create_tell_me_structure() {
-    # 建立系統目錄（需要 root 權限）
+    # Create system directories (requires root privileges)
     sudo mkdir -p "$TELL_ME_SYSTEM"
     sudo mkdir -p "$TELL_ME_LOGS"
     sudo mkdir -p "$TELL_ME_LOGIN"
     sudo mkdir -p "$TELL_ME_BOOT"
     sudo mkdir -p "$TELL_ME_CONFIG"
     
-    # 建立管理目錄
+    # Create management directory
     mkdir -p "$TELL_ME_MANAGE"
     
-    echo "Tell_Me 目錄結構已建立:"
-    echo "  系統服務: $TELL_ME_SYSTEM"
-    echo "  日誌檔案: $TELL_ME_LOGS"
-    echo "  登入服務: $TELL_ME_LOGIN"
-    echo "  開機服務: $TELL_ME_BOOT"
-    echo "  配置檔案: $TELL_ME_CONFIG"
-    echo "  管理工具: $TELL_ME_MANAGE"
+    echo "Tell_Me directory structure has been created:"
+    echo "  System service: $TELL_ME_SYSTEM"
+    echo "  Log files: $TELL_ME_LOGS"
+    echo "  Login service: $TELL_ME_LOGIN"
+    echo "  Boot service: $TELL_ME_BOOT"
+    echo "  Configuration file: $TELL_ME_CONFIG"
+    echo "  Management tool: $TELL_ME_MANAGE"
 }
 
-# 日誌函數
+# Log function
 log() {
     local log_file="$TELL_ME_LOGS/$(basename "$0" .sh).log"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$log_file"
 }
 
-# 清理舊日誌函數
+# Clean up old logs function
 cleanup_old_logs() {
     find "$TELL_ME_LOGS" -name "*.log" -type f -mtime +$LOG_RETENTION_DAYS -delete
-    log "已清理 $LOG_RETENTION_DAYS 天前的舊日誌檔案"
+    log "Cleaned up old log files from $LOG_RETENTION_DAYS days ago"
 }
 
-# 檢查依賴函數
+# Check dependencies function
 check_dependencies() {
     local deps=("curl" "systemctl")
     for dep in "${deps[@]}"; do
         if ! command -v "$dep" &> /dev/null; then
-            log "錯誤: 缺少依賴 $dep"
+            log "Error: Missing dependency $dep"
             return 1
         fi
     done
     return 0
 }
 
-# 檢查服務狀態函數
+# Check service status function
 check_service_status() {
     local service_name="$1"
     local status=$(systemctl is-active "$service_name")
     
     if [ "$status" = "active" ] || [ "$status" = "inactive" ]; then
-        # 對於 oneshot 服務，active 或 inactive 都是正常狀態
+        # For oneshot services, both active and inactive are normal states
         if [ "$service_name" = "boot-notify.service" ]; then
-            log "服務 $service_name 狀態: $status (oneshot 服務正常)"
+            log "Service $service_name status: $status (oneshot service normal)"
             return 0
         else
-            log "服務 $service_name 狀態: $status"
+            log "Service $service_name status: $status"
             return 0
         fi
     else
-        log "服務 $service_name 狀態異常: $status"
+        log "Service $service_name status abnormal: $status"
         return 1
     fi
 }
 
-# 匯出變數供其他腳本使用
+# Export variables for other scripts to use
 export TELL_ME_SYSTEM TELL_ME_LOGS TELL_ME_LOGIN TELL_ME_BOOT TELL_ME_CONFIG TELL_ME_MANAGE
 export DISCORD_WEBHOOK_URL DISCORD_USERNAME DISCORD_AVATAR_URL
 export LOG_RETENTION_DAYS

@@ -127,6 +127,11 @@ timedatectl
 hwclock --show
 
 echo "[INFO] Install Tell_Me"
-./install_tell_me.sh
+if [ -f "./install_tell_me.sh" ]; then
+    bash ./install_tell_me.sh
+    echo "[INFO] Tell_Me installation completed"
+else
+    echo "[WARNING] install_tell_me.sh not found, skipping Tell_Me installation"
+fi
 
 echo "[DONE] All setup completed"

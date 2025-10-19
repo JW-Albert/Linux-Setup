@@ -1,69 +1,69 @@
 #!/bin/bash
 
-# 載入配置
+# Load configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$SCRIPT_DIR/../config/config.sh"
 
-# 設定錯誤處理
+# Set error handling
 set -e
 
-# 建立日誌目錄
+# Create log directory
 mkdir -p "$TELL_ME_LOGS"
 LOG_FILE="$TELL_ME_LOGS/login_notify_install.log"
 
-# 日誌函數
+# Log function
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-log "開始安裝登入通知服務"
+log "Starting login notification service installation"
 
-# 安裝 curl
-log "安裝 curl..."
+# Install curl
+log "Installing curl..."
 sudo apt update
 sudo apt install -y curl
 
-# 建立目錄結構
-log "建立目錄結構..."
+# Create directory structure
+log "Creating directory structure..."
 sudo mkdir -p "$TELL_ME_LOGIN"
 sudo mkdir -p "$TELL_ME_LOGS"
 sudo mkdir -p "$TELL_ME_CONFIG"
 
-# 複製腳本到目標目錄
-log "複製腳本到目標目錄..."
+# Copy scripts to target directory
+log "Copying scripts to target directory..."
 sudo cp "$SCRIPT_DIR/notify.sh" "$TELL_ME_LOGIN/"
 sudo cp "$SCRIPT_DIR/setup.sh" "$TELL_ME_LOGIN/"
 sudo cp "$SCRIPT_DIR/../config/config.sh" "$TELL_ME_CONFIG/"
 
-# 設定腳本權限
-log "設定腳本權限..."
+# Set script permissions
+log "Setting script permissions..."
 sudo chmod +x "$TELL_ME_LOGIN/notify.sh"
 sudo chmod +x "$TELL_ME_LOGIN/setup.sh"
 
-# 安裝 systemd 服務
-log "安裝 systemd 服務..."
-# 複製服務檔案並替換路徑
+# Install systemd service
+log "Installing systemd service..."
+# Copy service file and replace path
 sed "s|ExecStart=.*|ExecStart=$TELL_ME_LOGIN/setup.sh|" "$SCRIPT_DIR/login-notify.service" | sudo tee /etc/systemd/system/login-notify.service > /dev/null
-log "服務檔案已安裝: /etc/systemd/system/login-notify.service"
+log "Service file installed: /etc/systemd/system/login-notify.service"
 
-# 檢查服務檔案內容
-log "檢查服務檔案內容:"
+# Check service file content
+log "Checking service file content:"
 sudo cat /etc/systemd/system/login-notify.service | tee -a "$LOG_FILE"
 
-# 啟用並啟動服務
-log "啟用並啟動服務..."
+# Enable and start service
+log "Enabling and starting service..."
 sudo systemctl daemon-reload
 sudo systemctl enable login-notify.service
 sudo systemctl start login-notify.service
 
-# 檢查服務狀態
+# Check service status
 if systemctl is-active --quiet login-notify.service; then
-    log "登入通知服務啟動成功"
+    log "Login notification service started successfully"
 else
-    log "登入通知服務啟動失敗"
+    log "Login notification service failed to start"
     exit 1
 fi
 
-log "登入通知服務安裝完成"
-log "腳本位置: $TELL_ME_LOGIN/"
-log "日誌位置: $TELL_ME_LOGS/"
+log "Login notification service installation completed"
+log "Script location: $TELL_ME_LOGIN/"
+log "Log location: $TELL_ME_LOGS/"

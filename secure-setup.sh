@@ -1,35 +1,38 @@
 #!/bin/bash
 # =========================================================
-# 一鍵安裝與設定 Fail2ban + PortSentry + SSH + UFW 安全組合
+# One-click installation and configuration of Fail2ban + PortSentry + SSH + UFW security combination
 # Tested on Debian / Ubuntu
 # =========================================================
 
 set -e
 
-echo "🔒 開始安裝 Fail2ban 與 PortSentry..."
+echo "🔒 Starting Fail2ban and PortSentry installation..."
 
 sudo apt update -y
 sudo apt install -y fail2ban portsentry ufw
 
 # =========================================================
-# STEP 1. 修改 SSH 設定
+# STEP 1. Modify SSH settings
 # =========================================================
-echo "⚙️ 修改 SSH Port 為 55555..."
-sudo sed -i 's/^#Port .*/Port 55555/' /etc/ssh/sshd_config
-sudo sed -i 's/^Port .*/Port 55555/' /etc/ssh/sshd_config
+echo "⚙️ Setting SSH Port..."
+read -p "Please enter SSH port (default: 55555): " ssh_port
+ssh_port=${ssh_port:-55555}
+echo "Setting SSH Port to $ssh_port..."
+sudo sed -i 's/^#Port .*/Port '"$ssh_port"'/' /etc/ssh/sshd_config
+sudo sed -i 's/^Port .*/Port '"$ssh_port"'/' /etc/ssh/sshd_config
 sudo systemctl restart ssh
 
 # =========================================================
-# STEP 2. 設定防火牆
+# STEP 2. Configure firewall
 # =========================================================
-echo "🧱 設定 UFW 防火牆..."
+echo "🧱 Configuring UFW firewall..."
 
 sudo ufw --force reset
 sudo ufw default deny incoming
 sudo ufw default allow outgoing
-sudo ufw allow 55555/tcp
+sudo ufw allow $ssh_port/tcp
 
-# 移除 ICMP (ping) 類封包
+# Remove ICMP (ping) packets
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type destination-unreachable/s/ACCEPT/DROP/' /etc/ufw/before.rules
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type time-exceeded/s/ACCEPT/DROP/' /etc/ufw/before.rules
 sudo sed -i '/-A ufw-before-input -p icmp --icmp-type parameter-problem/s/ACCEPT/DROP/' /etc/ufw/before.rules
@@ -39,9 +42,9 @@ sudo ufw logging on
 sudo ufw --force enable
 
 # =========================================================
-# STEP 3. Fail2ban 設定
+# STEP 3. Fail2ban configuration
 # =========================================================
-echo "⚙️ 設定 Fail2ban..."
+echo "⚙️ Configuring Fail2ban..."
 
 sudo cp /etc/fail2ban/jail.conf /etc/fail2ban/jail.conf.bak 2>/dev/null || true
 
@@ -54,7 +57,7 @@ backend  = auto
 
 [sshd]
 enabled = true
-port    = 55555
+port    = $ssh_port
 filter  = sshd
 logpath = /var/log/auth.log
 
@@ -74,9 +77,9 @@ ignoreregex =
 EOF
 
 # =========================================================
-# STEP 4. PortSentry 設定
+# STEP 4. PortSentry configuration
 # =========================================================
-echo "⚙️ 設定 PortSentry..."
+echo "⚙️ Configuring PortSentry..."
 
 sudo sed -i 's/^TCP_MODE=.*/TCP_MODE="atcp"/' /etc/default/portsentry
 sudo sed -i 's/^UDP_MODE=.*/UDP_MODE="audp"/' /etc/default/portsentry
@@ -93,9 +96,9 @@ sudo tee /etc/portsentry/portsentry.ignore.static >/dev/null <<'EOF'
 EOF
 
 # =========================================================
-# STEP 5. 啟動服務
+# STEP 5. Start services
 # =========================================================
-echo "🚀 啟動服務..."
+echo "🚀 Starting services..."
 
 sudo systemctl enable fail2ban
 sudo systemctl restart fail2ban
@@ -104,11 +107,11 @@ sudo systemctl enable portsentry
 sudo systemctl restart portsentry
 
 # =========================================================
-# STEP 6. 顯示狀態
+# STEP 6. Display status
 # =========================================================
 echo
 echo "======================================"
-echo "✅ 安裝與設定完成！目前服務狀態："
+echo "✅ Installation and configuration completed! Current service status:"
 echo "======================================"
 sudo systemctl status ssh --no-pager | grep Active
 sudo systemctl status ufw --no-pager | grep Active
@@ -116,16 +119,16 @@ sudo systemctl status fail2ban --no-pager | grep Active
 sudo systemctl status portsentry --no-pager | grep Active
 
 echo
-echo "🔍 檢查 Fail2ban Jail 狀態..."
+echo "🔍 Checking Fail2ban Jail status..."
 sudo fail2ban-client status
 
 echo
-echo "🎯 系統已啟用強化安全設定："
-echo " - SSH Port: 55555"
-echo " - ICMP 封包已封鎖 (ping 無法響應)"
-echo " - Fail2ban + PortSentry 已啟動"
-echo " - UFW 防火牆已啟用"
+echo "🎯 System has enabled enhanced security settings:"
+echo " - SSH Port: $ssh_port"
+echo " - ICMP packets blocked (ping will not respond)"
+echo " - Fail2ban + PortSentry started"
+echo " - UFW firewall enabled"
 echo
-echo "💡 如要登入伺服器，請使用： ssh -p 55555 user@your-server-ip"
-echo "💡 測試封鎖可用： sudo fail2ban-client set ufw banip 1.2.3.4"
-echo "💡 查看被封鎖 IP： sudo iptables -L -n | grep DROP"
+echo "💡 To login to server, use: ssh -p $ssh_port user@your-server-ip"
+echo "💡 Test blocking: sudo fail2ban-client set ufw banip 1.2.3.4"
+echo "💡 View blocked IPs: sudo iptables -L -n | grep DROP"

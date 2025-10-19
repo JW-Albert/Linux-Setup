@@ -2,51 +2,51 @@
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-# 設定基本變數（在載入配置之前）
+# Set basic variables (before loading configuration)
 TELL_ME_LOGS="/var/log/tell_me"
 
-# 建立日誌目錄
+# Create log directory
 sudo mkdir -p "$TELL_ME_LOGS"
 LOG_FILE="$TELL_ME_LOGS/notify.log"
 
-# 日誌函數
+# Log function
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
 }
 
-log "開始執行開機後通知腳本"
+log "Starting boot notification script execution"
 
-# 檢查配置檔案是否存在
+# Check if configuration file exists
 CONFIG_FILE="/etc/tell_me/config/config.sh"
 if [ ! -f "$CONFIG_FILE" ]; then
-    log "錯誤: 找不到配置檔案 $CONFIG_FILE"
+    log "Error: Configuration file $CONFIG_FILE not found"
     exit 1
 fi
 
-# 載入配置
+# Load configuration
 source "$CONFIG_FILE"
-log "配置檔案載入成功"
+log "Configuration file loaded successfully"
 
 # Get system information
 HOSTNAME=$(hostname)
 IP_ADDRESS=$(hostname -I | awk '{print $1}')
 DATE=$(date '+%Y-%m-%d %H:%M:%S')
 
-log "系統資訊 - 主機名: $HOSTNAME, IP: $IP_ADDRESS"
+log "System info - Hostname: $HOSTNAME, IP: $IP_ADDRESS"
 
-log "準備發送開機後通知到 Discord"
+log "Preparing to send boot notification to Discord"
 
-# 建立 Discord 訊息
-# 直接使用 free -h 的資訊，更清楚易懂
-MEMORY_INFO=$(free -h | awk 'NR==2{print "已用: " $3 " / 總計: " $2 " (可用: " $7 ")"}')
-SWAP_INFO=$(free -h | awk 'NR==3{print "已用: " $3 " / 總計: " $2}' | sed 's/已用: 0B \/ 總計: /未使用 /')
-log "記憶體資訊: $MEMORY_INFO"
-log "Swap 資訊: $SWAP_INFO"
+# Create Discord message
+# Use free -h information directly, clearer and easier to understand
+MEMORY_INFO=$(free -h | awk 'NR==2{print "Used: " $3 " / Total: " $2 " (Available: " $7 ")"}')
+SWAP_INFO=$(free -h | awk 'NR==3{print "Used: " $3 " / Total: " $2}' | sed 's/Used: 0B \/ Total: /Not used /')
+log "Memory info: $MEMORY_INFO"
+log "Swap info: $SWAP_INFO"
 
-DISCORD_MESSAGE="🚀 **系統開機通知**\n\n📊 **系統資訊**\n\`\`\`\n主機名: $HOSTNAME\nIP 地址: $IP_ADDRESS\n開機時間: $DATE\n運行時間: $(uptime -p)\n\`\`\`\n\n📈 **系統狀態**\n\`\`\`\n負載平均: $(uptime | awk -F'load average:' '{print $2}')\n磁碟使用率: $(df -h / | awk 'NR==2 {print $5}')\n記憶體: $MEMORY_INFO\nSwap: $SWAP_INFO\n\`\`\`"
+DISCORD_MESSAGE="🚀 **System Boot Notification**\n\n📊 **System Information**\n\`\`\`\nHostname: $HOSTNAME\nIP Address: $IP_ADDRESS\nBoot Time: $DATE\nUptime: $(uptime -p)\n\`\`\`\n\n📈 **System Status**\n\`\`\`\nLoad Average: $(uptime | awk -F'load average:' '{print $2}')\nDisk Usage: $(df -h / | awk 'NR==2 {print $5}')\nMemory: $MEMORY_INFO\nSwap: $SWAP_INFO\n\`\`\`"
 
-# 發送 Discord 通知
-log "開始發送 Discord 通知..."
+# Send Discord notification
+log "Starting to send Discord notification..."
 log "Webhook URL: $DISCORD_WEBHOOK_URL"
 
 curl -H "Content-Type: application/json" \
@@ -56,9 +56,9 @@ curl -H "Content-Type: application/json" \
 
 # Check if Discord notification was sent successfully
 if [ $? -eq 0 ]; then
-    log "開機後通知 Discord 發送成功"
+    log "Boot notification Discord sent successfully"
     exit 0
 else
-    log "開機後通知 Discord 發送失敗"
+    log "Boot notification Discord failed to send"
     exit 1
 fi

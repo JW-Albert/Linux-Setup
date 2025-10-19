@@ -1,149 +1,149 @@
 #!/bin/bash
 
-# Tell_Me 服務管理腳本
-# 用於管理所有 Tell_Me 相關服務
+# Tell_Me service management script
+# Used to manage all Tell_Me related services
 
-# 載入配置
+# Load configuration
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "/etc/tell_me/config/config.sh"
 
-# 顏色定義
+# Color definitions
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# 顯示標題
+# Display title
 show_title() {
     echo -e "${BLUE}================================${NC}"
-    echo -e "${BLUE}    Tell_Me 服務管理工具${NC}"
+    echo -e "${BLUE}    Tell_Me Service Management Tool${NC}"
     echo -e "${BLUE}================================${NC}"
 }
 
-# 顯示選單
+# Display menu
 show_menu() {
-    echo -e "${YELLOW}請選擇操作：${NC}"
-    echo "1. 檢查服務狀態"
-    echo "2. 啟動所有服務"
-    echo "3. 停止所有服務"
-    echo "4. 重啟所有服務"
-    echo "5. 查看日誌"
-    echo "6. 清理舊日誌"
-    echo "7. 測試 Discord 通知"
-    echo "8. 顯示配置資訊"
-    echo "9. 重新安裝服務"
-    echo "10. 退出"
+    echo -e "${YELLOW}Please select an operation:${NC}"
+    echo "1. Check service status"
+    echo "2. Start all services"
+    echo "3. Stop all services"
+    echo "4. Restart all services"
+    echo "5. View logs"
+    echo "6. Clean up old logs"
+    echo "7. Test Discord notification"
+    echo "8. Show configuration info"
+    echo "9. Reinstall services"
+    echo "10. Exit"
     echo ""
 }
 
-# 檢查服務狀態
+# Check service status
 check_services() {
-    echo -e "${BLUE}檢查服務狀態...${NC}"
+    echo -e "${BLUE}Checking service status...${NC}"
     echo ""
     
     services=("login-notify.service" "boot-notify.service")
     for service in "${services[@]}"; do
         if systemctl is-active --quiet "$service"; then
-            echo -e "✓ ${GREEN}$service${NC} - 運行中"
+            echo -e "✓ ${GREEN}$service${NC} - Running"
         else
-            echo -e "✗ ${RED}$service${NC} - 未運行"
+            echo -e "✗ ${RED}$service${NC} - Not running"
         fi
     done
     echo ""
 }
 
-# 啟動所有服務
+# Start all services
 start_services() {
-    echo -e "${BLUE}啟動所有服務...${NC}"
+    echo -e "${BLUE}Starting all services...${NC}"
 sudo systemctl start login-notify.service
 sudo systemctl start boot-notify.service
-    echo -e "${GREEN}所有服務已啟動${NC}"
+    echo -e "${GREEN}All services have been started${NC}"
     echo ""
 }
 
-# 停止所有服務
+# Stop all services
 stop_services() {
-    echo -e "${BLUE}停止所有服務...${NC}"
+    echo -e "${BLUE}Stopping all services...${NC}"
 sudo systemctl stop login-notify.service
 sudo systemctl stop boot-notify.service
-    echo -e "${YELLOW}所有服務已停止${NC}"
+    echo -e "${YELLOW}All services have been stopped${NC}"
     echo ""
 }
 
-# 重啟所有服務
+# Restart all services
 restart_services() {
-    echo -e "${BLUE}重啟所有服務...${NC}"
+    echo -e "${BLUE}Restarting all services...${NC}"
 sudo systemctl restart login-notify.service
 sudo systemctl restart boot-notify.service
-    echo -e "${GREEN}所有服務已重啟${NC}"
+    echo -e "${GREEN}All services have been restarted${NC}"
     echo ""
 }
 
-# 查看日誌
+# View logs
 view_logs() {
-    echo -e "${BLUE}可用的日誌檔案：${NC}"
-    echo "1. 登入通知日誌"
-    echo "2. 開機後通知日誌"
-    echo "3. 登入通知設定日誌"
-    echo "4. 所有日誌"
+    echo -e "${BLUE}Available log files:${NC}"
+    echo "1. Login notification log"
+    echo "2. Boot notification log"
+    echo "3. Login notification setup log"
+    echo "4. All logs"
     echo ""
-    read -p "請選擇 (1-4): " choice
+    read -p "Please select (1-4): " choice
     
     case $choice in
         1)
             if [ -f "$TELL_ME_LOGS/login_notify.log" ]; then
                 tail -f "$TELL_ME_LOGS/login_notify.log"
             else
-                echo -e "${RED}日誌檔案不存在${NC}"
+                echo -e "${RED}Log file does not exist${NC}"
             fi
             ;;
         2)
             if [ -f "$TELL_ME_LOGS/notify.log" ]; then
                 tail -f "$TELL_ME_LOGS/notify.log"
             else
-                echo -e "${RED}日誌檔案不存在${NC}"
+                echo -e "${RED}Log file does not exist${NC}"
             fi
             ;;
         3)
             if [ -f "$TELL_ME_LOGS/setup_login_notify.log" ]; then
                 tail -f "$TELL_ME_LOGS/setup_login_notify.log"
             else
-                echo -e "${RED}日誌檔案不存在${NC}"
+                echo -e "${RED}Log file does not exist${NC}"
             fi
             ;;
         4)
-            echo -e "${BLUE}所有日誌檔案：${NC}"
+            echo -e "${BLUE}All log files:${NC}"
             ls -la "$TELL_ME_LOGS/"
             ;;
         *)
-            echo -e "${RED}無效選擇${NC}"
+            echo -e "${RED}Invalid selection${NC}"
             ;;
     esac
     echo ""
 }
 
-# 清理舊日誌
+# Clean up old logs
 cleanup_logs() {
-    echo -e "${BLUE}清理舊日誌...${NC}"
+    echo -e "${BLUE}Cleaning up old logs...${NC}"
     cleanup_old_logs
-    echo -e "${GREEN}日誌清理完成${NC}"
+    echo -e "${GREEN}Log cleanup completed${NC}"
     echo ""
 }
 
-# 測試 Discord 通知
+# Test Discord notification
 test_discord() {
-    echo -e "${BLUE}測試 Discord 通知...${NC}"
+    echo -e "${BLUE}Testing Discord notification...${NC}"
     
     if [ -z "$DISCORD_WEBHOOK_URL" ]; then
-        echo -e "${RED}錯誤: Discord Webhook URL 未設定${NC}"
-        echo "請檢查 config.sh 中的 Discord 設定"
+        echo -e "${RED}Error: Discord Webhook URL not set${NC}"
+        echo "Please check Discord settings in config.sh"
         return 1
     fi
     
-    echo "發送測試通知到 Discord..."
+    echo "Sending test notification to Discord..."
     
-    TEST_MESSAGE="🧪 **Tell_Me 測試通知**\n\n**測試時間**: $(date '+%Y-%m-%d %H:%M:%S')\n**主機名**: $(hostname)\n**IP 地址**: $(hostname -I | awk '{print $1}')\n\n如果您看到這則訊息，表示 Tell_Me Discord 通知功能運作正常！ 🎉"
+    TEST_MESSAGE="🧪 **Tell_Me Test Notification**\n\n**Test Time**: $(date '+%Y-%m-%d %H:%M:%S')\n**Hostname**: $(hostname)\n**IP Address**: $(hostname -I | awk '{print $1}')\n\nIf you see this message, the Tell_Me Discord notification feature is working properly! 🎉"
     
     curl -H "Content-Type: application/json" \
          -X POST \
@@ -151,78 +151,78 @@ test_discord() {
          "$DISCORD_WEBHOOK_URL"
     
     if [ $? -eq 0 ]; then
-        echo -e "${GREEN}測試 Discord 通知發送成功！${NC}"
+        echo -e "${GREEN}Discord test notification sent successfully!${NC}"
     else
-        echo -e "${RED}測試 Discord 通知發送失敗${NC}"
+        echo -e "${RED}Discord test notification failed to send${NC}"
     fi
     echo ""
 }
 
-# 重新安裝服務
+# Reinstall services
 reinstall_services() {
-    echo -e "${BLUE}重新安裝服務...${NC}"
-    echo "1. 重新安裝登入通知服務"
-    echo "2. 重新安裝開機後 IP 通知服務"
-    echo "3. 重新安裝所有服務"
+    echo -e "${BLUE}Reinstalling services...${NC}"
+    echo "1. Reinstall login notification service"
+    echo "2. Reinstall boot IP notification service"
+    echo "3. Reinstall all services"
     echo ""
-    read -p "請選擇 (1-3): " choice
+    read -p "Please select (1-3): " choice
     
     case $choice in
         1)
-            echo -e "${BLUE}重新安裝登入通知服務...${NC}"
+            echo -e "${BLUE}Reinstalling login notification service...${NC}"
             if [ -f "$SCRIPT_DIR/Tell_Me/login/install.sh" ]; then
                 bash "$SCRIPT_DIR/Tell_Me/login/install.sh"
-                echo -e "${GREEN}登入通知服務重新安裝完成${NC}"
+                echo -e "${GREEN}Login notification service reinstalled${NC}"
             else
-                echo -e "${RED}找不到登入通知安裝腳本${NC}"
+                echo -e "${RED}Login notification install script not found${NC}"
             fi
             ;;
         2)
-            echo -e "${BLUE}重新安裝開機後通知服務...${NC}"
+            echo -e "${BLUE}Reinstalling boot notification service...${NC}"
             if [ -f "$SCRIPT_DIR/Tell_Me/boot/install.sh" ]; then
                 cd "$SCRIPT_DIR/Tell_Me/boot"
                 bash install.sh
-                echo -e "${GREEN}開機後通知服務重新安裝完成${NC}"
+                echo -e "${GREEN}Boot notification service reinstalled${NC}"
             else
-                echo -e "${RED}找不到開機後通知安裝腳本${NC}"
+                echo -e "${RED}Boot notification install script not found${NC}"
             fi
             ;;
         3)
-            echo -e "${BLUE}重新安裝所有服務...${NC}"
+            echo -e "${BLUE}Reinstalling all services...${NC}"
             if [ -f "$SCRIPT_DIR/install_tell_me.sh" ]; then
                 bash "$SCRIPT_DIR/install_tell_me.sh"
-                echo -e "${GREEN}所有服務重新安裝完成${NC}"
+                echo -e "${GREEN}All services reinstalled${NC}"
             else
-                echo -e "${RED}找不到統一安裝腳本${NC}"
+                echo -e "${RED}Unified install script not found${NC}"
             fi
             ;;
         *)
-            echo -e "${RED}無效選擇${NC}"
+            echo -e "${RED}Invalid selection${NC}"
             ;;
     esac
     echo ""
 }
 
-# 顯示配置資訊
+# Display configuration info
 show_config() {
-    echo -e "${BLUE}Tell_Me 配置資訊：${NC}"
-    echo "系統服務目錄: $TELL_ME_SYSTEM"
-    echo "日誌目錄: $TELL_ME_LOGS"
-    echo "登入通知: $TELL_ME_LOGIN"
-    echo "開機通知: $TELL_ME_BOOT"
-    echo "管理工具: $TELL_ME_MANAGE"
-    echo "Discord 機器人: $DISCORD_USERNAME"
+    echo -e "${BLUE}Tell_Me Configuration Info:${NC}"
+    echo "System service directory: $TELL_ME_SYSTEM"
+    echo "Log directory: $TELL_ME_LOGS"
+    echo "Login notification: $TELL_ME_LOGIN"
+    echo "Boot notification: $TELL_ME_BOOT"
+    echo "Management tool: $TELL_ME_MANAGE"
+    echo "Discord bot: $DISCORD_USERNAME"
     echo "Discord Webhook: ${DISCORD_WEBHOOK_URL:0:50}..."
-    echo "日誌保留天數: $LOG_RETENTION_DAYS"
+    echo "Log retention days: $LOG_RETENTION_DAYS"
     echo ""
 }
 
-# 主程式
+# Main program
 main() {
     while true; do
         show_title
         show_menu
-        read -p "請輸入選項 (1-10): " choice
+        read -p "Please enter option (1-10): " choice
         echo ""
         
         case $choice in
@@ -236,19 +236,19 @@ main() {
             8) show_config ;;
             9) reinstall_services ;;
             10) 
-                echo -e "${GREEN}再見！${NC}"
+                echo -e "${GREEN}Goodbye!${NC}"
                 exit 0
                 ;;
             *)
-                echo -e "${RED}無效選項，請重新選擇${NC}"
+                echo -e "${RED}Invalid option, please select again${NC}"
                 ;;
         esac
         
         echo ""
-        read -p "按 Enter 鍵繼續..."
+        read -p "Press Enter to continue..."
         clear
     done
 }
 
-# 執行主程式
+# Execute main program
 main

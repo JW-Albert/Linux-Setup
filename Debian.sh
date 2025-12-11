@@ -126,10 +126,15 @@ timedatectl set-ntp true
 echo "[INFO] Write system time to hardware clock"
 hwclock -w
 
+clear
+
 echo "[INFO] Show current time status"
 timedatectl
 hwclock --show
 
-echo "[DONE] All setup completed"
+echo "\n\n [DONE] All setup completed"
+
+echo "[INFO] Rebooting in 3 seconds"
+sleep 3
 
 reboot

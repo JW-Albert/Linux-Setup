@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e  # Exit script if there is an error
+
+clear
+
 echo "[INFO] Updating apt"
 sudo apt update -y && sudo apt upgrade -y
 

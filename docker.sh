@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e  # Exit script if there is an error
+
+clear
+
 echo "[INFO] Updating apt"
 sudo apt update && sudo apt upgrade -y
 
@@ -22,4 +26,4 @@ echo "[INFO] Granting permissions to Docker Compose"
 sudo chmod +x /usr/local/bin/docker-compose
 
 echo "[INFO] Docker Compose version"
-sudo docker-compose --version
+sudo docker compose --version

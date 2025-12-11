@@ -1,5 +1,9 @@
 #!/bin/bash
 
+set -e  # Exit script if there is an error
+
+clear
+
 echo "[SETUP] Backing up sshd_config..."
 sudo cp /etc/ssh/sshd_config /etc/ssh/sshd_config.bak.$(date +%s)
 

@@ -1,6 +1,10 @@
 #!/bin/bash
 # This script needs to be executed as root!
 
+set -e  # Exit script if there is an error
+
+clear
+
 echo "[INFO] Updating apt"
 apt update && apt upgrade -y
 

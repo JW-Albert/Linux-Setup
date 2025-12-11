@@ -1,6 +1,10 @@
 #!/bin/bash
 # This script needs to be executed as root!
 
+set -e  # Exit script if there is an error
+
+clear
+
 echo "[INFO] Set root password"
 passwd
 
@@ -126,12 +130,6 @@ echo "[INFO] Show current time status"
 timedatectl
 hwclock --show
 
-echo "[INFO] Install Tell_Me"
-if [ -f "./install_tell_me.sh" ]; then
-    bash ./install_tell_me.sh
-    echo "[INFO] Tell_Me installation completed"
-else
-    echo "[WARNING] install_tell_me.sh not found, skipping Tell_Me installation"
-fi
-
 echo "[DONE] All setup completed"
+
+reboot

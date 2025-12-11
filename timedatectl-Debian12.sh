@@ -44,6 +44,8 @@ sudo timedatectl set-ntp true
 echo "[INFO] Writing system time to hardware clock"
 sudo hwclock -w
 
+clear
+
 echo "[INFO] Displaying current time status"
 sudo timedatectl
 sudo hwclock --show

@@ -5,6 +5,8 @@ set -e  # Exit script if there is an error
 
 clear
 
+alias ll="ls -laF"
+
 echo "[INFO] Set root password"
 passwd
 

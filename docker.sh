@@ -26,4 +26,4 @@ echo "[INFO] Granting permissions to Docker Compose"
 sudo chmod +x /usr/local/bin/docker-compose
 
 echo "[INFO] Docker Compose version"
-sudo docker compose --version
+sudo docker compose version

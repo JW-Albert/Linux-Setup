@@ -1,0 +1,21 @@
+name = "tellme-worker"
+main = "src/index.js"
+compatibility_date = "2024-01-01"
+
+# KV Namespaces
+[[kv_namespaces]]
+binding = "REG_KV"
+id = "your-reg-kv-id"
+preview_id = "your-reg-kv-preview-id"
+
+[[kv_namespaces]]
+binding = "TOKEN_KV"
+id = "your-token-kv-id"
+preview_id = "your-token-kv-preview-id"
+
+# Secrets (set via: wrangler secret put SECRET_NAME)
+# DISCORD_WEBHOOK
+# RESEND_API_KEY
+# EMAIL_TO
+# EMAIL_FROM
+

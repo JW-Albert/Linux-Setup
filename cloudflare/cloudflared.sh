@@ -3,6 +3,8 @@
 
 set -e  # Exit script if there is an error
 
+sudo apt install curl -y
+
 clear
 
 sudo mkdir -p --mode=0755 /usr/share/keyrings

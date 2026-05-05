@@ -30,4 +30,4 @@ sudo make altinstall
 
 clear
 echo "Done"
-python3.14 --version
+python3.12 --version

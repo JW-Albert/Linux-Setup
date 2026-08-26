@@ -11,13 +11,17 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "[INFO] Please change Your Password"
 passwd
 
+clear
 echo "[INFO] Switching apt sources to mirrors.kernel.org"
 sudo bash "$SCRIPT_DIR/apt/apt_mirror-Ubuntu24.sh"
 
+clear
 echo "[INFO] Running ufw secure setup"
 sudo bash "$SCRIPT_DIR/network/ufw_secure_setup.sh"
 
+clear
 echo "[INFO] Running timedatectl Ubuntu24 setup"
 sudo bash "$SCRIPT_DIR/time/timedatectl-Ubuntu24.sh"
 
+clear
 echo "[DONE] Ubuntu 24.04 setup completed"
